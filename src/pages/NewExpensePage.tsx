@@ -13,7 +13,7 @@ export const NewExpensePage = () => {
     return <>
         <h1>New Expense</h1>
         <div className={classes['vertical-space']}>
-            <Link to='/'>Back</Link>
+            <Link to={-1 as any}>Back</Link>
         </div>
         <NewExpenseForm data={{
             onSubmitCallback: onFormSubmitCallback,

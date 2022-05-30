@@ -10,24 +10,24 @@ export type FetchExpensesOutputExpense = {
     tags: string[],
 }
 
+let cachedFetchExpenseOutput: FetchExpensesOutput | undefined = undefined
+
 export const fetchExpenses = async (): Promise<FetchExpensesOutput> => {
+    if (cachedFetchExpenseOutput) {
+        return cachedFetchExpenseOutput
+    }
+
     const response = await fetch(
         'https://natso-test-default-rtdb.asia-southeast1.firebasedatabase.app/expense.json',
     )
 
-    console.log(response)
-
     if (!response.ok) {
         const error = await response.text()
-
-        console.log(error)
 
         throw Error(error)
     }
 
     const data = await response.json()
-
-    console.log(data)
 
     const output = {
         expenses: Object.entries<{
@@ -46,7 +46,11 @@ export const fetchExpenses = async (): Promise<FetchExpensesOutput> => {
         )
     }
 
-    console.log(output)
+    cachedFetchExpenseOutput = output
 
     return output
+}
+
+export const clearFetchExpensesCache = (): void => {
+    cachedFetchExpenseOutput = undefined
 }

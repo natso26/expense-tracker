@@ -4,20 +4,30 @@ import {fetchExpenses, FetchExpensesOutput} from "../api/fetch-expenses";
 import classes from './ExpenseDashboard.module.css'
 import {ExpenseTable} from "./ExpenseTable";
 import {parseTags} from "../common/tag";
+import {serializeDateForInput} from "../common/date";
 
 
-export const ExpenseDashboard = () => {
+export type ExpenseDashboardData = {
+    filter: ExpenseDashboardDataFilter,
+    setFilterCallback: (filter: ExpenseDashboardDataFilter) => void,
+}
+
+export type ExpenseDashboardDataFilter = {
+    startTime?: Date,
+    endTime?: Date,
+    tags: string[],
+}
+
+export const ExpenseDashboard = (props: {
+    data: ExpenseDashboardData,
+}) => {
     type Filter = {
         startTime?: Date,
         endTime?: Date,
         tags: string[],
     }
 
-    const [filter, setFilter] = React.useState<Filter>({
-        startTime: undefined,
-        endTime: undefined,
-        tags: [],
-    })
+    const [filter, setFilter] = React.useState<Filter>(props.data.filter)
 
     const [fetchExpensesOutput, setFetchExpensesOutput] = React.useState<State<FetchExpensesOutput>>(
         StateConstructor.IniState(),
@@ -43,6 +53,12 @@ export const ExpenseDashboard = () => {
             tags: parseTags(e.target.value),
         }))
     }
+
+    const setFilterCallback = props.data.setFilterCallback
+
+    React.useEffect(() => {
+        setFilterCallback(filter)
+    }, [setFilterCallback, filter])
 
     const filteredExpenses = (fetchExpensesOutput.data?.expenses ?? []).filter((expense) => (
         (!filter.startTime || expense.timestamp >= filter.startTime)
@@ -72,18 +88,21 @@ export const ExpenseDashboard = () => {
                 onChange={onStartTimeChange}
                 id="start-time"
                 type="datetime-local"
+                defaultValue={filter.startTime ? serializeDateForInput(filter.startTime) : ''}
             />
             <label htmlFor="end-time">End time</label>
             <input
                 onChange={onEndTimeChange}
                 id="end-time"
                 type="datetime-local"
+                defaultValue={filter.endTime ? serializeDateForInput(filter.endTime) : ''}
             />
             <label htmlFor="tags">Tags</label>
             <input
                 onChange={onTagsChange}
                 id="tags"
                 type="search"
+                defaultValue={filter.tags.join(', ')}
             />
         </div>
         {(() => {

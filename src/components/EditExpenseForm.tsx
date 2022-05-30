@@ -47,8 +47,6 @@ export const EditExpenseForm = (props: {
             }),
         }
 
-        console.log(input)
-
         try {
             await editExpense(input)
 
@@ -65,8 +63,6 @@ export const EditExpenseForm = (props: {
         e.preventDefault()
 
         const confirmResp = window.confirm('Confirm deletion?')
-
-        console.log(confirmResp)
 
         if (!confirmResp) return
 
@@ -117,7 +113,7 @@ export const EditExpenseForm = (props: {
                         <input
                             ref={tagsRef} id="tags"
                             type="text"
-                            defaultValue={serializedExpense.tags}
+                            defaultValue={props.data.expense.tags.join(', ')}
                         />
                     </div>
                     <div className={classes['vertical-space']}>

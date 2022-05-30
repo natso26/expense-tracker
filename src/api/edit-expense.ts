@@ -1,3 +1,5 @@
+import {clearFetchExpensesCache} from "./fetch-expenses";
+
 export type EditExpenseInput = {
     id: string,
     timestamp: Date,
@@ -7,6 +9,8 @@ export type EditExpenseInput = {
 }
 
 export const editExpense = async (input: EditExpenseInput): Promise<void> => {
+    clearFetchExpensesCache()
+
     const response = await fetch(
         `https://natso-test-default-rtdb.asia-southeast1.firebasedatabase.app/expense/${input.id}.json`,
         {
@@ -23,12 +27,8 @@ export const editExpense = async (input: EditExpenseInput): Promise<void> => {
         }
     )
 
-    console.log(response)
-
     if (!response.ok) {
         const error = await response.text()
-
-        console.log(error)
 
         throw Error(error)
     }

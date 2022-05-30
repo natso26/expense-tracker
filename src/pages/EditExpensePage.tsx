@@ -12,13 +12,13 @@ export const EditExpensePage = () => {
     const navigate = useNavigate()
 
     const onFormSubmitCallback = React.useCallback(() => {
-        navigate('/')
+        navigate(-1)
     }, [navigate])
 
     return <>
         <h1>Edit Expense</h1>
         <div className={classes['vertical-space']}>
-            <Link to='/'>Back</Link>
+            <Link to={-1 as any}>Back</Link>
         </div>
         <EditExpenseForm data={{
             expense: {

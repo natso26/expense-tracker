@@ -32,8 +32,6 @@ export const NewExpenseForm = (props: {
             tags: tagsRef.current!.value,
         })
 
-        console.log(input)
-
         try {
             await addExpense(input)
 
