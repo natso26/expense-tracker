@@ -8,7 +8,6 @@ export type NewExpenseFormData = {
     onSubmitCallback: () => void,
 }
 
-
 export const NewExpenseForm = (props: {
     data: NewExpenseFormData,
 }) => {
@@ -18,7 +17,6 @@ export const NewExpenseForm = (props: {
     const titleRef = React.useRef<HTMLInputElement>(null)
     const amountRef = React.useRef<HTMLInputElement>(null)
     const tagsRef = React.useRef<HTMLInputElement>(null)
-
 
     const onSubmit = async (e: any) => {
         e.preventDefault()
@@ -72,6 +70,7 @@ export const NewExpenseForm = (props: {
                         <input
                             ref={tagsRef} id="tags"
                             type="text"
+                            placeholder="tag 1, tag 2"
                         />
                     </div>
                     <div className={classes['vertical-space']}>

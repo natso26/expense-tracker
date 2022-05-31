@@ -7,7 +7,7 @@ import {parseExpense} from "../common/expense";
 
 export const EditExpensePage = () => {
     const {id} = useParams()
-    const [searchParams, setSearchParams] = useSearchParams()
+    const [searchParams] = useSearchParams()
 
     const navigate = useNavigate()
 

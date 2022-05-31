@@ -5,6 +5,7 @@ import {editExpense} from "../api/edit-expense";
 import {parseExpense, serializeExpense} from "../common/expense";
 import {serializeDateForInput} from "../common/date";
 import {deleteExpense} from "../api/delete-expense";
+import {serializeTags} from "../common/tag";
 
 export type EditExpenseFormData = {
     expense: EditExpenseFormDataExpense,
@@ -28,9 +29,6 @@ export const EditExpenseForm = (props: {
     const titleRef = React.useRef<HTMLInputElement>(null)
     const amountRef = React.useRef<HTMLInputElement>(null)
     const tagsRef = React.useRef<HTMLInputElement>(null)
-
-
-    const serializedExpense = serializeExpense(props.data.expense)
 
     const onSubmit = async (e: any) => {
         e.preventDefault()
@@ -82,6 +80,8 @@ export const EditExpenseForm = (props: {
         }
     }
 
+    const serializedExpense = serializeExpense(props.data.expense)
+
     switch (submit.state) {
         case "INIT":
             return (
@@ -113,7 +113,8 @@ export const EditExpenseForm = (props: {
                         <input
                             ref={tagsRef} id="tags"
                             type="text"
-                            defaultValue={props.data.expense.tags.join(', ')}
+                            placeholder="tag 1, tag 2"
+                            defaultValue={serializeTags(props.data.expense.tags)}
                         />
                     </div>
                     <div className={classes['vertical-space']}>

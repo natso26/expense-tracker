@@ -2,20 +2,24 @@ import React from "react";
 import classes from './HomePage.module.css'
 import {Link, useSearchParams} from "react-router-dom";
 import {ExpenseDashboard, ExpenseDashboardDataFilter} from "../components/ExpenseDashboard";
-import {parseTags} from "../common/tag";
+import {compactSerializeTags, parseTags} from "../common/tag";
+import {parseDate} from "../common/date";
 
 export const HomePage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
+    const [initialSearchParams] = React.useState<URLSearchParams>(searchParams)
 
-    const parseDate = (date: string): Date | undefined => (
-        date ? new Date(date) : undefined
-    )
+    const parseFilter = (params: URLSearchParams): ExpenseDashboardDataFilter => ({
+        startTime: parseDate(params.get('startTime') ?? ''),
+        endTime: parseDate(params.get('endTime') ?? ''),
+        tags: parseTags(params.get('tags') ?? ''),
+    })
 
     const setFilterCallback = React.useCallback((filter: ExpenseDashboardDataFilter) => {
         setSearchParams(Object.fromEntries(Object.entries({
             startTime: filter.startTime?.toISOString() ?? '',
             endTime: filter.endTime?.toISOString() ?? '',
-            tags: filter.tags.join(','),
+            tags: compactSerializeTags(filter.tags),
         }).filter(
             ([k, v]) => v,
         )))
@@ -27,11 +31,8 @@ export const HomePage = () => {
             <Link to='/new-expense'>New expense</Link>
         </div>
         <ExpenseDashboard data={{
-            filter: {
-                startTime: parseDate(searchParams.get('startTime') ?? ''),
-                endTime: parseDate(searchParams.get('endTime') ?? ''),
-                tags: parseTags(searchParams.get('tags') ?? ''),
-            },
+            defaultFilter: parseFilter(initialSearchParams),
+            filter: parseFilter(searchParams),
             setFilterCallback: setFilterCallback,
         }}/>
     </>

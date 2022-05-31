@@ -1,4 +1,4 @@
-import {parseTags} from "./tag";
+import {compactSerializeTags, parseTags} from "./tag";
 
 export type SerializeExpenseInput = {
     timestamp: Date,
@@ -32,7 +32,7 @@ export const serializeExpense = (input: SerializeExpenseInput): SerializeExpense
     timestamp: input.timestamp.toISOString(),
     title: input.title,
     amount: input.amount.toFixed(2),
-    tags: input.tags.join(','),
+    tags: compactSerializeTags(input.tags),
 })
 
 export const parseExpense = (input: ParseExpenseInput): ParseExpenseOutput => ({

@@ -1,3 +1,7 @@
+.vertical-space {
+    margin: 25px 0;
+}
+
 /* https://stackoverflow.com/questions/9686538/align-labels-in-form-next-to-input */
 
 div.input-grid {
