@@ -17,5 +17,5 @@ export const compactSerializeTags = (tags: string[]): string => (
 const cleanTag = (tag: string): string => (
     tag.trim()
         .toLowerCase()
-        .replace(/\s+/g, '_')
+        .replace(/\s+/g, ' ')
 )
