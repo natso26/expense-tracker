@@ -22,7 +22,9 @@ export const HomePage = () => {
             tags: compactSerializeTags(filter.tags),
         }).filter(
             ([k, v]) => v,
-        )))
+        )), {
+            replace: true,
+        })
     }, [setSearchParams])
 
     return <>
