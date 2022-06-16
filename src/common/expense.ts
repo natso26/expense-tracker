@@ -38,6 +38,6 @@ export const serializeExpense = (input: SerializeExpenseInput): SerializeExpense
 export const parseExpense = (input: ParseExpenseInput): ParseExpenseOutput => ({
     timestamp: new Date(input.timestamp),
     title: input.title.trim(),
-    amount: parseFloat(input.amount),
+    amount: parseFloat(input.amount || '0'),
     tags: parseTags(input.tags),
 })

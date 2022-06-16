@@ -98,15 +98,13 @@ export const EditExpenseForm = (props: {
                         <input
                             ref={titleRef} id="title"
                             type="text"
-                            required
                             defaultValue={serializedExpense.title}
                         />
                         <label htmlFor="amount">Amount</label>
                         <input
                             ref={amountRef} id="amount"
                             type="number"
-                            required
-                            min="0.01" step="0.01"
+                            min="0" step="0.01"
                             defaultValue={serializedExpense.amount}
                         />
                         <label htmlFor="tags">Tags</label>

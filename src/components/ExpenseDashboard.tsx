@@ -91,7 +91,7 @@ export const ExpenseDashboard = (props: {
 
     const defaultFilter = props.data.defaultFilter
 
-    const isFilterNonEmpty = Boolean(filter.date || filter.tags.length)
+    const isFilterNonEmpty = Boolean(filter.date || filter.title || filter.tags.length)
 
     const filteredExpenses = (fetchExpensesOutput.data?.expenses ?? []).filter((expense) => (
         (!filter.date || (expense.timestamp >= filter.date && expense.timestamp < addOneDay(filter.date)))

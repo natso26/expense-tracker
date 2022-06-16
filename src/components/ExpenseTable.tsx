@@ -65,7 +65,7 @@ export const ExpenseTable = (props: {
                         minute: '2-digit',
                     })}</td>
                     <td>{expense.title}</td>
-                    <td className={classes.amount}>{expense.amount.toFixed(2)}</td>
+                    <td className={classes.amount}>{(expense.amount || null)?.toFixed(2) ?? '\u2013'}</td>
                     <td>{serializeTags(expense.tags)}</td>
                 </tr>
             </>)}

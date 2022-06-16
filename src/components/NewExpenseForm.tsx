@@ -32,6 +32,8 @@ export const NewExpenseForm = (props: {
             tags: tagsRef.current!.value,
         })
 
+        console.log(input)
+
         try {
             await addExpense(input)
 
@@ -60,14 +62,12 @@ export const NewExpenseForm = (props: {
                         <input
                             ref={titleRef} id="title"
                             type="text"
-                            required
                         />
                         <label htmlFor="amount">Amount</label>
                         <input
                             ref={amountRef} id="amount"
                             type="number"
-                            required
-                            min="0.01" step="0.01"
+                            min="0" step="0.01"
                         />
                         <label htmlFor="tags">Tags</label>
                         <input
