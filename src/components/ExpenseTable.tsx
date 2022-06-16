@@ -59,7 +59,7 @@ export const ExpenseTable = (props: {
                     </tr>
                 )}
                 <tr id={expense.id} onClick={onClickExpense}>
-                    <td>{expense.timestamp.toLocaleTimeString(undefined, {
+                    <td>{expense.timestamp.toLocaleTimeString('en-GB', {
                         hour12: false,
                         hour: '2-digit',
                         minute: '2-digit',
