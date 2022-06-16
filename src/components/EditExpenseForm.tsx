@@ -3,7 +3,7 @@ import {State, StateConstructor} from "../common/state";
 import classes from "./EditExpenseForm.module.css";
 import {editExpense} from "../api/edit-expense";
 import {parseExpense, serializeExpense} from "../common/expense";
-import {serializeDateForInput} from "../common/date";
+import {serializeDateForDateTimeInput} from "../common/date";
 import {deleteExpense} from "../api/delete-expense";
 import {serializeTags} from "../common/tag";
 
@@ -92,7 +92,7 @@ export const EditExpenseForm = (props: {
                             ref={timestampRef} id="timestamp"
                             type="datetime-local"
                             required
-                            defaultValue={serializeDateForInput(props.data.expense.timestamp)}
+                            defaultValue={serializeDateForDateTimeInput(props.data.expense.timestamp)}
                         />
                         <label htmlFor="title">Title</label>
                         <input

@@ -3,22 +3,20 @@ import classes from './HomePage.module.css'
 import {Link, useSearchParams} from "react-router-dom";
 import {ExpenseDashboard, ExpenseDashboardDataFilter} from "../components/ExpenseDashboard";
 import {compactSerializeTags, parseTags} from "../common/tag";
-import {parseDate} from "../common/date";
+import {parseDateTime} from "../common/date";
 
 export const HomePage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
     const [initialSearchParams] = React.useState<URLSearchParams>(searchParams)
 
     const parseFilter = (params: URLSearchParams): ExpenseDashboardDataFilter => ({
-        startTime: parseDate(params.get('startTime') ?? ''),
-        endTime: parseDate(params.get('endTime') ?? ''),
+        date: parseDateTime(params.get('date') ?? ''),
         tags: parseTags(params.get('tags') ?? ''),
     })
 
     const setFilterCallback = React.useCallback((filter: ExpenseDashboardDataFilter) => {
         setSearchParams(Object.fromEntries(Object.entries({
-            startTime: filter.startTime?.toISOString() ?? '',
-            endTime: filter.endTime?.toISOString() ?? '',
+            date: filter.date?.toISOString() ?? '',
             tags: compactSerializeTags(filter.tags),
         }).filter(
             ([k, v]) => v,
