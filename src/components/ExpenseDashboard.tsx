@@ -4,7 +4,7 @@ import {fetchExpenses, FetchExpensesOutput} from "../api/fetch-expenses";
 import classes from './ExpenseDashboard.module.css'
 import {ExpenseTable} from "./ExpenseTable";
 import {parseTags, serializeTags} from "../common/tag";
-import {addOneDay, parseDate, serializeDateForDateInput} from "../common/date";
+import {addOneDay, parseDate, serializeForDateInput} from "../common/date";
 
 export type ExpenseDashboardData = {
     defaultFilter: ExpenseDashboardDataFilter,
@@ -94,7 +94,7 @@ export const ExpenseDashboard = (props: {
                 onChange={onDateChange}
                 id="date"
                 type="date"
-                defaultValue={serializeDateForDateInput(defaultFilter.date)}
+                defaultValue={serializeForDateInput(defaultFilter.date)}
             />
             <label htmlFor="tags">Tags</label>
             <input
