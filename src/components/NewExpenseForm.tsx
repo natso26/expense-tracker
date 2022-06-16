@@ -3,8 +3,10 @@ import {addExpense} from "../api/add-expense";
 import {State, StateConstructor} from "../common/state";
 import classes from "./NewExpenseForm.module.css";
 import {parseExpense} from "../common/expense";
+import {serializeForDateTimeInput} from "../common/date";
 
 export type NewExpenseFormData = {
+    timestamp: Date,
     onSubmitCallback: () => void,
 }
 
@@ -52,6 +54,7 @@ export const NewExpenseForm = (props: {
                             ref={timestampRef} id="timestamp"
                             type="datetime-local"
                             required
+                            defaultValue={serializeForDateTimeInput(props.data.timestamp)}
                         />
                         <label htmlFor="title">Title</label>
                         <input
