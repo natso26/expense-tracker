@@ -42,7 +42,7 @@ export const fetchExpenses = async (): Promise<FetchExpensesOutput> => {
             amount: value.amount,
             tags: value.tags ?? [],
         })).sort((a, b) =>
-            b.timestamp.getTime() - a.timestamp.getTime(),
+            b.timestamp.getTime() - a.timestamp.getTime() || b.id.localeCompare(a.id),
         )
     }
 
