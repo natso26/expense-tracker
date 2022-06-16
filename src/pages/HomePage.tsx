@@ -11,12 +11,14 @@ export const HomePage = () => {
 
     const parseFilter = (params: URLSearchParams): ExpenseDashboardDataFilter => ({
         date: parseDateTime(params.get('date') ?? ''),
+        title: params.get('title') ?? '',
         tags: parseTags(params.get('tags') ?? ''),
     })
 
     const setFilterCallback = React.useCallback((filter: ExpenseDashboardDataFilter) => {
         setSearchParams(Object.fromEntries(Object.entries({
             date: filter.date?.toISOString() ?? '',
+            title: filter.title,
             tags: compactSerializeTags(filter.tags),
         }).filter(
             ([k, v]) => v,

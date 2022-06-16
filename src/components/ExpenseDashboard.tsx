@@ -14,6 +14,7 @@ export type ExpenseDashboardData = {
 
 export type ExpenseDashboardDataFilter = {
     date?: Date,
+    title: string,
     tags: string[],
 }
 
@@ -22,6 +23,7 @@ export const ExpenseDashboard = (props: {
 }) => {
     type Filter = {
         date?: Date,
+        title: string,
         tags: string[],
     }
 
@@ -59,6 +61,13 @@ export const ExpenseDashboard = (props: {
         }))
     }
 
+    const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setFilter((filter) => ({
+            ...filter,
+            title: e.target.value.trim().toLowerCase(),
+        }))
+    }
+
     const onTagsChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFilter((filter) => ({
             ...filter,
@@ -69,10 +78,12 @@ export const ExpenseDashboard = (props: {
     const onClickClearFilter = () => {
         setFilter(() => {
             document.querySelector<HTMLInputElement>('#date')!.value = ''
+            document.querySelector<HTMLInputElement>('#title')!.value = ''
             document.querySelector<HTMLInputElement>('#tags')!.value = ''
 
             return {
                 date: undefined,
+                title: '',
                 tags: [],
             }
         })
@@ -84,6 +95,7 @@ export const ExpenseDashboard = (props: {
 
     const filteredExpenses = (fetchExpensesOutput.data?.expenses ?? []).filter((expense) => (
         (!filter.date || (expense.timestamp >= filter.date && expense.timestamp < addOneDay(filter.date)))
+        && expense.title.toLowerCase().includes(filter.title.toLowerCase())
         && filter.tags.every((tag) => expense.tags.includes(tag))
     ))
 
@@ -95,6 +107,13 @@ export const ExpenseDashboard = (props: {
                 id="date"
                 type="date"
                 defaultValue={serializeForDateInput(defaultFilter.date)}
+            />
+            <label htmlFor="title">Title</label>
+            <input
+                onChange={onTitleChange}
+                id="title"
+                type="search"
+                defaultValue={defaultFilter.title}
             />
             <label htmlFor="tags">Tags</label>
             <input
