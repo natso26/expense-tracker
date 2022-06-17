@@ -5,7 +5,6 @@ export type DeleteExpenseInput = {
     id: string,
 }
 
-
 export const deleteExpense = async (input: DeleteExpenseInput): Promise<void> => {
     clearFetchExpensesCache()
 

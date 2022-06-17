@@ -1,7 +1,9 @@
 import {databaseDomain} from "./domain";
+import {processExpense} from "./process-expense";
 
 export type FetchExpensesOutput = {
     expenses: FetchExpensesOutputExpense[],
+    tagRelations: FetchExpensesOutputTagRelation[],
 }
 
 export type FetchExpensesOutputExpense = {
@@ -10,6 +12,15 @@ export type FetchExpensesOutputExpense = {
     title: string,
     amount: number,
     tags: string[],
+    // computed properties
+    expandedTags: string[],
+}
+
+export type FetchExpensesOutputTagRelation = {
+    tag: string,
+    isPartOf: string[],
+    // computed properties
+    contains: string[],
 }
 
 let cachedFetchExpenseOutput: FetchExpensesOutput | undefined = undefined
@@ -20,7 +31,7 @@ export const fetchExpenses = async (): Promise<FetchExpensesOutput> => {
     }
 
     const response = await fetch(
-        `${databaseDomain}/expense.json`,
+        `${databaseDomain}.json`,
     )
 
     if (!response.ok) {
@@ -31,13 +42,13 @@ export const fetchExpenses = async (): Promise<FetchExpensesOutput> => {
 
     const data = await response.json()
 
-    const output = {
+    const rawOutput = {
         expenses: Object.entries<{
             timestamp: string,
             title: string,
             amount: number,
             tags?: string[],
-        }>(data ?? {}).map(([id, value]) => ({
+        }>(data?.expense ?? {}).map(([id, value]) => ({
             id,
             timestamp: new Date(value.timestamp),
             title: value.title,
@@ -45,8 +56,18 @@ export const fetchExpenses = async (): Promise<FetchExpensesOutput> => {
             tags: value.tags ?? [],
         })).sort((a, b) =>
             b.timestamp.getTime() - a.timestamp.getTime() || b.id.localeCompare(a.id),
+        ),
+        tagRelations: Object.entries<{
+            isPartOf?: string[],
+        }>(data?.tagRelation ?? {}).map(([tag, value]) => ({
+            tag,
+            isPartOf: value.isPartOf ?? [],
+        })).sort((a, b) =>
+            a.tag.localeCompare(b.tag)
         )
     }
+
+    const output = processExpense(rawOutput)
 
     cachedFetchExpenseOutput = output
 

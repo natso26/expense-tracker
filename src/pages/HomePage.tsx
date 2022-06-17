@@ -37,5 +37,8 @@ export const HomePage = () => {
             filter: parseFilter(searchParams),
             setFilterCallback: setFilterCallback,
         }}/>
+        <div className={classes['vertical-space']}>
+            <Link to='/manage-tags'>Manage tags</Link>
+        </div>
     </>
 }
