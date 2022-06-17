@@ -1,4 +1,5 @@
 import {clearFetchExpensesCache} from "./fetch-expenses";
+import {databaseDomain} from "./domain";
 
 export type AddExpenseInput = {
     timestamp: Date,
@@ -11,7 +12,7 @@ export const addExpense = async (input: AddExpenseInput): Promise<void> => {
     clearFetchExpensesCache()
 
     const response = await fetch(
-        'https://natso-test-default-rtdb.asia-southeast1.firebasedatabase.app/expense.json',
+        `${databaseDomain}/expense.json`,
         {
             method: 'POST',
             headers: {

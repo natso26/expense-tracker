@@ -1,4 +1,5 @@
 import {clearFetchExpensesCache} from "./fetch-expenses";
+import {databaseDomain} from "./domain";
 
 export type EditExpenseInput = {
     id: string,
@@ -12,7 +13,7 @@ export const editExpense = async (input: EditExpenseInput): Promise<void> => {
     clearFetchExpensesCache()
 
     const response = await fetch(
-        `https://natso-test-default-rtdb.asia-southeast1.firebasedatabase.app/expense/${input.id}.json`,
+        `${databaseDomain}/expense/${input.id}.json`,
         {
             method: 'PUT',
             headers: {

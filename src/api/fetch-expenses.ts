@@ -1,3 +1,5 @@
+import {databaseDomain} from "./domain";
+
 export type FetchExpensesOutput = {
     expenses: FetchExpensesOutputExpense[],
 }
@@ -18,7 +20,7 @@ export const fetchExpenses = async (): Promise<FetchExpensesOutput> => {
     }
 
     const response = await fetch(
-        'https://natso-test-default-rtdb.asia-southeast1.firebasedatabase.app/expense.json',
+        `${databaseDomain}/expense.json`,
     )
 
     if (!response.ok) {

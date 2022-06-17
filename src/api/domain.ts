@@ -1,0 +1,1 @@
+export const databaseDomain = 'https://natso-expense-tracker-default-rtdb.firebaseio.com/'
