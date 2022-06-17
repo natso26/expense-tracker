@@ -1,6 +1,5 @@
 {
   "hosting": {
-    "site": "natso-test-expense-tracker",
     "public": "build",
     "ignore": [
       "firebase.json",
