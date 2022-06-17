@@ -14,7 +14,10 @@ export const NewExpensePage = () => {
     }, [navigate])
 
     const searchParamsTimestamp = parseDateTime(searchParams.get('timestamp') ?? '')
-    const timestamp = searchParamsTimestamp ?? new Date()
+
+    const timestamp = React.useMemo(() => (
+        searchParamsTimestamp ?? new Date()
+    ), [searchParamsTimestamp])
 
     React.useEffect(() => {
         if (!searchParamsTimestamp) {
@@ -24,7 +27,7 @@ export const NewExpensePage = () => {
                 replace: true,
             })
         }
-    }, [])
+    }, [searchParamsTimestamp, setSearchParams, timestamp])
 
     return <>
         <h1>New Expense</h1>
