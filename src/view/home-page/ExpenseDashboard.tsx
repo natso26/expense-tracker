@@ -1,10 +1,11 @@
 import React, {ChangeEvent} from "react";
-import {State, StateConstructor} from "../common/state";
-import {fetchExpenses, FetchExpensesOutput} from "../api/fetch-expenses";
+import {State, StateConstructor} from "../../common/state";
 import classes from './ExpenseDashboard.module.css'
 import {ExpenseTable} from "./ExpenseTable";
-import {parseTags, serializeTags} from "../common/tag";
-import {addOneDay, parseDate, serializeForDateInput} from "../common/date";
+import {parseTags, serializeTags} from "../../common/tag";
+import {parseDate, serializeForDateInput} from "../../common/date";
+import {CombinedBloc, CombinedBlocGetExpensesOutput} from "../../bloc/combined-bloc";
+import {ExpenseBlocExpense} from "../../bloc/expense-bloc";
 
 export type ExpenseDashboardData = {
     defaultFilter: ExpenseDashboardDataFilter,
@@ -29,30 +30,19 @@ export const ExpenseDashboard = (props: {
 
     const [filter, setFilter] = React.useState<Filter>(props.data.filter)
 
-    const [fetchExpensesOutput, setFetchExpensesOutput] = React.useState<State<FetchExpensesOutput>>(
+    const [fetchExpensesOutput, setFetchExpensesOutput] = React.useState<State<CombinedBlocGetExpensesOutput>>(
         StateConstructor.IniState(),
     )
 
     const setFilterCallback = props.data.setFilterCallback
 
     React.useEffect(() => {
-        setFilterCallback(filter)
-    }, [setFilterCallback, filter])
-
-    React.useEffect(() => {
         (async () => {
-            setFetchExpensesOutput(StateConstructor.LoadingState())
+            setFilterCallback(filter)
 
-            try {
-                const data = await fetchExpenses()
-
-                setFetchExpensesOutput(StateConstructor.DataState(data))
-
-            } catch (e) {
-                setFetchExpensesOutput(StateConstructor.ErrorState(e))
-            }
+            await CombinedBloc.getExpenses({filter}, setFetchExpensesOutput)
         })()
-    }, [])
+    }, [setFilterCallback, filter])
 
     const onDateChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFilter((filter) => ({
@@ -93,11 +83,7 @@ export const ExpenseDashboard = (props: {
 
     const isFilterNonEmpty = Boolean(filter.date || filter.title || filter.tags.length)
 
-    const filteredExpenses = (fetchExpensesOutput.data?.expenses ?? []).filter((expense) => (
-        (!filter.date || (expense.timestamp >= filter.date && expense.timestamp < addOneDay(filter.date)))
-        && expense.title.toLowerCase().includes(filter.title.toLowerCase())
-        && filter.tags.every((tag) => expense.tags.includes(tag))
-    ))
+    const expenses = fetchExpensesOutput.data?.expenses ?? new Map<string, ExpenseBlocExpense>()
 
     return <>
         <div className={classes['input-grid']}>
@@ -144,7 +130,7 @@ export const ExpenseDashboard = (props: {
                 case "DATA":
                     return (
                         <ExpenseTable data={{
-                            expenses: filteredExpenses,
+                            expenses,
                         }}/>
                     )
 

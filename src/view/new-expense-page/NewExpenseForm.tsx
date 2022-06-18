@@ -1,29 +1,19 @@
 import React from "react";
-import {State, StateConstructor} from "../common/state";
-import classes from "./EditExpenseForm.module.css";
-import {editExpense} from "../api/edit-expense";
-import {parseExpense, serializeExpense} from "../common/expense";
-import {serializeForDateTimeInput} from "../common/date";
-import {deleteExpense} from "../api/delete-expense";
-import {serializeTags} from "../common/tag";
+import {State, StateConstructor} from "../../common/state";
+import classes from "./NewExpenseForm.module.css";
+import {parseExpense} from "../../common/expense";
+import {serializeForDateTimeInput} from "../../common/date";
+import {ExpenseBloc} from "../../bloc/expense-bloc";
 
-export type EditExpenseFormData = {
-    expense: EditExpenseFormDataExpense,
+export type NewExpenseFormData = {
+    timestamp: Date,
     onSubmitCallback: () => void,
 }
 
-export type EditExpenseFormDataExpense = {
-    id: string,
-    timestamp: Date,
-    title: string,
-    amount: number,
-    tags: string[],
-}
-
-export const EditExpenseForm = (props: {
-    data: EditExpenseFormData,
+export const NewExpenseForm = (props: {
+    data: NewExpenseFormData,
 }) => {
-    const [submit, setSubmit] = React.useState<State<null>>(StateConstructor.IniState())
+    const [submit, setSubmit] = React.useState<State<void>>(StateConstructor.IniState())
 
     const timestampRef = React.useRef<HTMLInputElement>(null)
     const titleRef = React.useRef<HTMLInputElement>(null)
@@ -33,11 +23,8 @@ export const EditExpenseForm = (props: {
     const onSubmit = async (e: any) => {
         e.preventDefault()
 
-        setSubmit(StateConstructor.LoadingState())
-
         const input = {
-            id: props.data.expense.id,
-            ...parseExpense({
+            expense: parseExpense({
                 timestamp: timestampRef.current!.value,
                 title: titleRef.current!.value,
                 amount: amountRef.current!.value,
@@ -45,42 +32,12 @@ export const EditExpenseForm = (props: {
             }),
         }
 
-        try {
-            await editExpense(input)
+        await ExpenseBloc.add(input, (state) => {
+            setSubmit(state)
 
-            setSubmit(StateConstructor.DataState(null))
-
-            props.data.onSubmitCallback()
-
-        } catch (e) {
-            setSubmit(StateConstructor.ErrorState(e))
-        }
+            if (state.state === 'DATA') props.data.onSubmitCallback()
+        })
     }
-
-    const onClickDelete = async (e: any) => {
-        e.preventDefault()
-
-        const confirmResp = window.confirm('Confirm deletion?')
-
-        if (!confirmResp) return
-
-        setSubmit(StateConstructor.LoadingState())
-
-        try {
-            await deleteExpense({
-                id: props.data.expense.id,
-            })
-
-            setSubmit(StateConstructor.DataState(null))
-
-            props.data.onSubmitCallback()
-
-        } catch (e) {
-            setSubmit(StateConstructor.ErrorState(e))
-        }
-    }
-
-    const serializedExpense = serializeExpense(props.data.expense)
 
     switch (submit.state) {
         case "INIT":
@@ -92,34 +49,28 @@ export const EditExpenseForm = (props: {
                             ref={timestampRef} id="timestamp"
                             type="datetime-local"
                             required
-                            defaultValue={serializeForDateTimeInput(props.data.expense.timestamp)}
+                            defaultValue={serializeForDateTimeInput(props.data.timestamp)}
                         />
                         <label htmlFor="title">Title</label>
                         <input
                             ref={titleRef} id="title"
                             type="text"
-                            defaultValue={serializedExpense.title}
                         />
                         <label htmlFor="amount">Amount</label>
                         <input
                             ref={amountRef} id="amount"
                             type="number"
                             min="0" step="0.01"
-                            defaultValue={serializedExpense.amount}
                         />
                         <label htmlFor="tags">Tags</label>
                         <input
                             ref={tagsRef} id="tags"
                             type="text"
                             placeholder="tag 1, tag 2"
-                            defaultValue={serializeTags(props.data.expense.tags)}
                         />
                     </div>
                     <div className={classes['vertical-space']}>
                         <button>Submit</button>
-                    </div>
-                    <div className={classes['vertical-space']} onClick={onClickDelete}>
-                        <button className={classes['delete-btn']}>Delete</button>
                     </div>
                 </form>
             )

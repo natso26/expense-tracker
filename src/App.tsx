@@ -1,10 +1,10 @@
 import React from 'react';
 import './App.css';
 import {Route, Routes} from "react-router-dom";
-import {HomePage} from "./pages/HomePage";
-import {NewExpensePage} from "./pages/NewExpensePage";
-import {EditExpensePage} from "./pages/EditExpensePage";
-import {ManageTagsPage} from "./pages/ManageTagsPage";
+import {HomePage} from "./view/home-page/HomePage";
+import {NewExpensePage} from "./view/new-expense-page/NewExpensePage";
+import {EditExpensePage} from "./view/edit-expense-page/EditExpensePage";
+import {SummaryPage} from "./view/summary-page/SummaryPage";
 
 function App() {
     return (
@@ -12,7 +12,7 @@ function App() {
             <Route path='/' element={<HomePage/>}></Route>
             <Route path='/new-expense' element={<NewExpensePage/>}></Route>
             <Route path='/edit-expense/:id' element={<EditExpensePage/>}></Route>
-            <Route path='/manage-tags' element={<ManageTagsPage/>}></Route>
+            <Route path='/summary' element={<SummaryPage/>}></Route>
         </Routes>
     )
 }

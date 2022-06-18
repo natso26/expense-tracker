@@ -1,8 +1,8 @@
 import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
-import classes from "./NewExpensePage.module.css";
+import classes from "../new-expense-page/NewExpensePage.module.css";
 import React from "react";
-import {EditExpenseForm} from "../components/EditExpenseForm";
-import {parseExpense} from "../common/expense";
+import {EditExpenseForm} from "./EditExpenseForm";
+import {parseExpense} from "../../common/expense";
 
 
 export const EditExpensePage = () => {

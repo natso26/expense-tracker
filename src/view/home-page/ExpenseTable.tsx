@@ -1,15 +1,14 @@
-import {serializeTags} from "../common/tag";
+import {serializeTags} from "../../common/tag";
 import classes from './ExpenseTable.module.css'
 import React, {MouseEvent} from "react";
 import {createSearchParams, useNavigate} from "react-router-dom";
-import {serializeExpense} from "../common/expense";
+import {serializeExpense} from "../../common/expense";
 
 export type ExpenseTableData = {
-    expenses: ExpenseTableDataExpense[],
+    expenses: Map<string, ExpenseTableDataExpense>,
 }
 
 export type ExpenseTableDataExpense = {
-    id: string,
     timestamp: Date,
     title: string,
     amount: number,
@@ -22,20 +21,21 @@ export const ExpenseTable = (props: {
     const navigate = useNavigate()
 
     const onClickExpense = (e: MouseEvent<HTMLTableRowElement>) => {
-        const expense = props.data.expenses.find((expense) => (
-            expense.id === e.currentTarget.id
-        ))!
+        const id = e.currentTarget.id
+        const expense = props.data.expenses.get(id)!
 
         navigate({
-            pathname: `/edit-expense/${expense.id}`,
+            pathname: `/edit-expense/${id}`,
             search: createSearchParams(
                 serializeExpense(expense)
             ).toString(),
         })
     }
 
-    const totalAmount = props.data.expenses
-        .map((expense) => expense.amount)
+    const expenseEntries = [...props.data.expenses.entries()]
+
+    const totalAmount = expenseEntries
+        .map(([id, expense]) => expense.amount)
         .reduce((a, b) => a + b, 0)
 
     return <>
@@ -52,13 +52,13 @@ export const ExpenseTable = (props: {
             </tr>
             </thead>
             <tbody>
-            {props.data.expenses.map((expense, index, array) => <>
-                {(!index || expense.timestamp.getDate() !== array[index - 1].timestamp.getDate()) && (
+            {expenseEntries.map(([id, expense], index, array) => <>
+                {(!index || expense.timestamp.toDateString() !== array[index - 1][1].timestamp.toDateString()) && (
                     <tr>
                         <td className={classes.date} colSpan={4}>{expense.timestamp.toDateString()}</td>
                     </tr>
                 )}
-                <tr id={expense.id} onClick={onClickExpense}>
+                <tr id={id} onClick={onClickExpense}>
                     <td>{expense.timestamp.toLocaleTimeString('en-GB', {
                         hour12: false,
                         hour: '2-digit',

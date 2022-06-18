@@ -1,9 +1,9 @@
 import React from "react";
 import classes from './HomePage.module.css'
 import {Link, useSearchParams} from "react-router-dom";
-import {ExpenseDashboard, ExpenseDashboardDataFilter} from "../components/ExpenseDashboard";
-import {compactSerializeTags, parseTags} from "../common/tag";
-import {parseDateTime} from "../common/date";
+import {ExpenseDashboard, ExpenseDashboardDataFilter} from "./ExpenseDashboard";
+import {compactSerializeTags, parseTags} from "../../common/tag";
+import {parseDateTime} from "../../common/date";
 
 export const HomePage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -29,16 +29,14 @@ export const HomePage = () => {
 
     return <>
         <h1>Expense Tracker</h1>
-        <div className={classes['vertical-space']}>
+        <div className={[classes['vertical-space'], classes['space-between']].join(' ')}>
             <Link to='/new-expense'>New expense</Link>
+            <Link to='/summary'>Summary</Link>
         </div>
         <ExpenseDashboard data={{
             defaultFilter: parseFilter(initialSearchParams),
             filter: parseFilter(searchParams),
             setFilterCallback: setFilterCallback,
         }}/>
-        <div className={classes['vertical-space']}>
-            <Link to='/manage-tags'>Manage tags</Link>
-        </div>
     </>
 }

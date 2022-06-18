@@ -1,8 +1,8 @@
-import {NewExpenseForm} from "../components/NewExpenseForm";
+import {NewExpenseForm} from "./NewExpenseForm";
 import {Link, useNavigate, useSearchParams} from "react-router-dom";
 import classes from './NewExpensePage.module.css'
 import React from "react";
-import {parseDateTime} from "../common/date";
+import {parseDateTime} from "../../common/date";
 
 export const NewExpensePage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
