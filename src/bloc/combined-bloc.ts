@@ -1,8 +1,8 @@
 import {ExpenseBlocExpense} from "./expense-bloc";
-import {CombinedCache, CombinedCacheValue} from "./combined-cache";
+import {Store, StoreValue} from "./store";
 import {CombinedApi} from "../api/combined-api";
 import {processCombined} from "./process-combined";
-import {addOneDay} from "../common/date";
+import {onReferenceDate} from "../common/date";
 import {BlocHelper} from "./bloc-helper";
 
 export type CombinedBlocGetExpensesInput = {
@@ -20,7 +20,7 @@ export type CombinedBlocGetExpensesInputFilter = {
 }
 
 export const CombinedBloc = {
-    getExpenses: BlocHelper.wrapWithSetState(
+    getExpenses: BlocHelper.wrapWithStateCallback(
         async (input: CombinedBlocGetExpensesInput): Promise<CombinedBlocGetExpensesOutput> => {
             const combined = await getCombined()
 
@@ -30,7 +30,7 @@ export const CombinedBloc = {
                 expenses: new Map(
                     [...combined.expenses]
                         .filter(([id, expense]) =>
-                            (!filter.date || (expense.timestamp >= filter.date && expense.timestamp < addOneDay(filter.date)))
+                            (!filter.date || onReferenceDate(expense.timestamp, filter.date))
                             && expense.title.toLowerCase().includes(filter.title.toLowerCase())
                             && filter.tags.every((tag) => expense.expandedTags.has(tag)))
                         .map(([id, expense]) => [id, {
@@ -45,16 +45,16 @@ export const CombinedBloc = {
     ),
 }
 
-const getCombined = async (): Promise<CombinedCacheValue> => {
-    const cacheState = CombinedCache.get()
+const getCombined = async (): Promise<StoreValue> => {
+    const storeState = Store.get()
 
-    if (cacheState.hasValue) return cacheState.value
+    if (storeState.hasValue) return storeState.value
 
     const rawOutput = await CombinedApi.fetch()
 
     const output = processCombined(rawOutput)
 
-    CombinedCache.set(output)
+    Store.set(output)
 
     return output
 }

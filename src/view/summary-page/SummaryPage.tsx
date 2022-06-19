@@ -1,5 +1,5 @@
 import {Link} from "react-router-dom";
-import classes from "../new-expense-page/NewExpensePage.module.css";
+import classes from "./SummaryPage.module.css";
 import React from "react";
 
 export const SummaryPage = () => {

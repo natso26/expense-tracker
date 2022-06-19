@@ -1,5 +1,5 @@
 import {ExpenseApi} from "../api/expense-api";
-import {CombinedCache} from "./combined-cache";
+import {Store} from "./store";
 import {BlocHelper} from "./bloc-helper";
 
 export type ExpenseBlocAddInput = {
@@ -23,23 +23,23 @@ export type ExpenseBlocExpense = {
 }
 
 export const ExpenseBloc = {
-    add: BlocHelper.wrapWithSetState(
+    add: BlocHelper.wrapWithStateCallback(
         async (input: ExpenseBlocAddInput) => {
-            CombinedCache.clear()
+            Store.clear()
 
             await ExpenseApi.add(input)
         },
     ),
-    edit: BlocHelper.wrapWithSetState(
+    edit: BlocHelper.wrapWithStateCallback(
         async (input: ExpenseBlocEditInput): Promise<void> => {
-            CombinedCache.clear()
+            Store.clear()
 
             await ExpenseApi.edit(input)
         },
     ),
-    delete: BlocHelper.wrapWithSetState(
+    delete: BlocHelper.wrapWithStateCallback(
         async (input: ExpenseBlocDeleteInput): Promise<void> => {
-            CombinedCache.clear()
+            Store.clear()
 
             await ExpenseApi.delete(input)
         },

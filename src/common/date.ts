@@ -26,8 +26,18 @@ export const serializeForDateInput = (date: Date | undefined): string => {
     return newDate.toISOString().slice(0, 10)
 }
 
-export const addOneDay = (date: Date): Date => {
-    const newDate = new Date(date)
-    newDate.setDate(newDate.getDate() + 1)
-    return newDate
+export const onReferenceDate = (date: Date, referenceDate: Date): Boolean => {
+    const difference = date.valueOf() - referenceDate.valueOf()
+
+    return difference >= 0 && difference < millisecondsInDay
 }
+
+export const onSameDate = (date1: Date, date2: Date): Boolean => {
+    const value1 = date1.valueOf() - date1.getTimezoneOffset() * millisecondsInMinutes
+    const value2 = date2.valueOf() - date2.getTimezoneOffset() * millisecondsInMinutes
+
+    return value1 - value1 % millisecondsInDay === value2 - value2 % millisecondsInDay
+}
+
+const millisecondsInMinutes = 60 * 1000
+const millisecondsInDay = 24 * 60 * millisecondsInMinutes

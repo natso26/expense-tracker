@@ -1,8 +1,8 @@
 import {CombinedApiFetchOutput} from "../api/combined-api";
-import {CombinedCacheValue} from "./combined-cache";
+import {StoreValue} from "./store";
 import {reverseGraph, transitiveClosure} from "../common/graph";
 
-export const processCombined = (input: CombinedApiFetchOutput): CombinedCacheValue => {
+export const processCombined = (input: CombinedApiFetchOutput): StoreValue => {
     const inclusions = new Map(
         [...input.tagRelations].map(([tag, relation]) =>
             [tag, new Set(relation.isPartOf)]),

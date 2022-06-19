@@ -1,8 +1,9 @@
-import {serializeTags} from "../../common/tag";
+import {compactSerializeTags, serializeTags} from "../../common/tag";
 import classes from './ExpenseTable.module.css'
 import React, {MouseEvent} from "react";
 import {createSearchParams, useNavigate} from "react-router-dom";
-import {serializeExpense} from "../../common/expense";
+import {serializeAmount} from "../../common/expense";
+import {onSameDate} from "../../common/date";
 
 export type ExpenseTableData = {
     expenses: Map<string, ExpenseTableDataExpense>,
@@ -26,13 +27,16 @@ export const ExpenseTable = (props: {
 
         navigate({
             pathname: `/edit-expense/${id}`,
-            search: createSearchParams(
-                serializeExpense(expense)
-            ).toString(),
+            search: createSearchParams({
+                timestamp: expense.timestamp.toISOString(),
+                title: expense.title,
+                amount: serializeAmount(expense.amount),
+                tags: compactSerializeTags(expense.tags),
+            }).toString(),
         })
     }
 
-    const expenseEntries = [...props.data.expenses.entries()]
+    const expenseEntries = [...props.data.expenses]
 
     const totalAmount = expenseEntries
         .map(([id, expense]) => expense.amount)
@@ -40,7 +44,7 @@ export const ExpenseTable = (props: {
 
     return <>
         <div className={classes['vertical-space']}>
-            <p>Total: <span className={classes.total}>{totalAmount.toFixed(2)}</span></p>
+            <p>Total: <span className={classes.total}>{serializeAmount(totalAmount)}</span></p>
         </div>
         <table className={classes['styled-table']}>
             <thead>
@@ -52,23 +56,23 @@ export const ExpenseTable = (props: {
             </tr>
             </thead>
             <tbody>
-            {expenseEntries.map(([id, expense], index, array) => <>
-                {(!index || expense.timestamp.toDateString() !== array[index - 1][1].timestamp.toDateString()) && (
-                    <tr>
+            {expenseEntries.flatMap(([id, expense], index, array) => [
+                (!index || !onSameDate(expense.timestamp, array[index - 1][1].timestamp)) && (
+                    <tr key={`${id}_date_header`} id={`${id}_date_header`}>
                         <td className={classes.date} colSpan={4}>{expense.timestamp.toDateString()}</td>
                     </tr>
-                )}
-                <tr id={id} onClick={onClickExpense}>
+                ),
+                <tr key={id} id={id} onClick={onClickExpense}>
                     <td>{expense.timestamp.toLocaleTimeString('en-GB', {
                         hour12: false,
                         hour: '2-digit',
                         minute: '2-digit',
                     })}</td>
                     <td>{expense.title}</td>
-                    <td className={classes.amount}>{(expense.amount || null)?.toFixed(2) ?? '\u2013'}</td>
+                    <td className={classes.amount}>{serializeAmount(expense.amount || undefined) || '\u2013'}</td>
                     <td>{serializeTags(expense.tags)}</td>
                 </tr>
-            </>)}
+            ])}
             </tbody>
         </table>
     </>

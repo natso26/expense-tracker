@@ -1,4 +1,4 @@
-import {CombinedCache} from "./combined-cache";
+import {Store} from "./store";
 import {TagRelationApi} from "../api/tag-relation-api";
 import {BlocHelper} from "./bloc-helper";
 
@@ -12,9 +12,9 @@ export type TagRelationBlocRelation = {
 }
 
 export const TagRelationBloc = {
-    edit: BlocHelper.wrapWithSetState(
+    edit: BlocHelper.wrapWithStateCallback(
         async (input: TagRelationBlocEditInput): Promise<void> => {
-            CombinedCache.clear()
+            Store.clear()
 
             await TagRelationApi.edit(input)
         },

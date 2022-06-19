@@ -1,18 +1,18 @@
 import {State, StateConstructor} from "../common/state";
 
 export const BlocHelper = {
-    wrapWithSetState: <I, O>(
+    wrapWithStateCallback: <I, O>(
         operation: (input: I) => Promise<O>,
-    ) => async (input: I, setState: (state: State<O>) => void) => {
-        setState(StateConstructor.LoadingState())
+    ) => async (input: I, stateCallback: (state: State<O>) => void) => {
+        stateCallback(StateConstructor.LoadingState())
 
         try {
             const output = await operation(input)
 
-            setState(StateConstructor.DataState(output))
+            stateCallback(StateConstructor.DataState(output))
 
         } catch (e) {
-            setState(StateConstructor.ErrorState(e))
+            stateCallback(StateConstructor.ErrorState(e))
         }
     },
 }

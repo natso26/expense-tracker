@@ -1,7 +1,7 @@
 import React from "react";
 import {State, StateConstructor} from "../../common/state";
 import classes from "./EditExpenseForm.module.css";
-import {parseExpense, serializeExpense} from "../../common/expense";
+import {parseExpense, serializeAmount} from "../../common/expense";
 import {serializeForDateTimeInput} from "../../common/date";
 import {serializeTags} from "../../common/tag";
 import {ExpenseBloc} from "../../bloc/expense-bloc";
@@ -29,11 +29,13 @@ export const EditExpenseForm = (props: {
     const amountRef = React.useRef<HTMLInputElement>(null)
     const tagsRef = React.useRef<HTMLInputElement>(null)
 
+    const expense = props.data.expense
+
     const onSubmit = async (e: any) => {
         e.preventDefault()
 
         const input = {
-            id: props.data.expense.id,
+            id: expense.id,
             expense: parseExpense({
                 timestamp: timestampRef.current!.value,
                 title: titleRef.current!.value,
@@ -65,8 +67,6 @@ export const EditExpenseForm = (props: {
         })
     }
 
-    const serializedExpense = serializeExpense(props.data.expense)
-
     switch (submit.state) {
         case "INIT":
             return (
@@ -77,20 +77,20 @@ export const EditExpenseForm = (props: {
                             ref={timestampRef} id="timestamp"
                             type="datetime-local"
                             required
-                            defaultValue={serializeForDateTimeInput(props.data.expense.timestamp)}
+                            defaultValue={serializeForDateTimeInput(expense.timestamp)}
                         />
                         <label htmlFor="title">Title</label>
                         <input
                             ref={titleRef} id="title"
                             type="text"
-                            defaultValue={serializedExpense.title}
+                            defaultValue={expense.title}
                         />
                         <label htmlFor="amount">Amount</label>
                         <input
                             ref={amountRef} id="amount"
                             type="number"
                             min="0" step="0.01"
-                            defaultValue={serializedExpense.amount}
+                            defaultValue={serializeAmount(expense.amount)}
                         />
                         <label htmlFor="tags">Tags</label>
                         <input
