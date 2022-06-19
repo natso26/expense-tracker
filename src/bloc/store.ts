@@ -14,7 +14,7 @@ export type StoreValueExpense = {
 }
 
 export type StoreValueTagRelation = {
-    isPartOf: string[]
+    isPartOf: string[],
     contains: string[], // computed
 }
 

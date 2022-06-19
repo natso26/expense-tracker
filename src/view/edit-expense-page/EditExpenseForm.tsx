@@ -97,7 +97,7 @@ export const EditExpenseForm = (props: {
                             ref={tagsRef} id="tags"
                             type="text"
                             placeholder="tag 1, tag 2"
-                            defaultValue={serializeTags(props.data.expense.tags)}
+                            defaultValue={serializeTags(expense.tags)}
                         />
                     </div>
                     <div className={classes['vertical-space']}>
