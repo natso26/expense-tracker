@@ -5,7 +5,6 @@ import {ExpenseTable} from "./ExpenseTable";
 import {parseTags, serializeTags} from "../../common/tag";
 import {parseDate, serializeForDateInput} from "../../common/date";
 import {CombinedBloc, CombinedBlocGetExpensesOutput} from "../../bloc/combined-bloc";
-import {ExpenseBlocExpense} from "../../bloc/expense-bloc";
 
 export type ExpenseDashboardData = {
     defaultFilter: ExpenseDashboardDataFilter,
@@ -83,8 +82,6 @@ export const ExpenseDashboard = (props: {
 
     const isFilterNonEmpty = Boolean(filter.date || filter.title || filter.tags.length)
 
-    const expenses = fetchExpensesOutput.data?.expenses ?? new Map<string, ExpenseBlocExpense>()
-
     return <>
         <div className={classes['input-grid']}>
             <label htmlFor="date">Date</label>
@@ -129,9 +126,9 @@ export const ExpenseDashboard = (props: {
 
                 case "DATA":
                     return (
-                        <ExpenseTable data={{
-                            expenses,
-                        }}/>
+                        <ExpenseTable data={
+                            fetchExpensesOutput.data
+                        }/>
                     )
 
                 case "ERROR":

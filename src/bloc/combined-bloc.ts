@@ -10,6 +10,7 @@ export type CombinedBlocGetExpensesInput = {
 }
 
 export type CombinedBlocGetExpensesOutput = {
+    totalAmount: number,
     expenses: Map<string, ExpenseBlocExpense>,
 }
 
@@ -26,20 +27,22 @@ export const CombinedBloc = {
 
             const filter = input.filter
 
+            const expenseEntries = [...combined.expenses]
+                .filter(([, expense]) =>
+                    (!filter.date || onReferenceDate(expense.timestamp, filter.date))
+                    && expense.title.toLowerCase().includes(filter.title.toLowerCase())
+                    && filter.tags.every((tag) => expense.expandedTags.has(tag)))
+                .map<[string, ExpenseBlocExpense]>(([id, expense]) => [id, {
+                    timestamp: expense.timestamp,
+                    title: expense.title,
+                    amount: expense.amount,
+                    tags: expense.tags,
+                }])
+
             return {
-                expenses: new Map(
-                    [...combined.expenses]
-                        .filter(([id, expense]) =>
-                            (!filter.date || onReferenceDate(expense.timestamp, filter.date))
-                            && expense.title.toLowerCase().includes(filter.title.toLowerCase())
-                            && filter.tags.every((tag) => expense.expandedTags.has(tag)))
-                        .map(([id, expense]) => [id, {
-                            timestamp: expense.timestamp,
-                            title: expense.title,
-                            amount: expense.amount,
-                            tags: expense.tags,
-                        }]),
-                ),
+                totalAmount: expenseEntries.reduce((sum, [, expense]) =>
+                    sum + expense.amount, 0),
+                expenses: new Map(expenseEntries),
             }
         },
     ),

@@ -6,6 +6,7 @@ import {serializeAmount} from "../../common/expense";
 import {onSameDate} from "../../common/date";
 
 export type ExpenseTableData = {
+    totalAmount: number,
     expenses: Map<string, ExpenseTableDataExpense>,
 }
 
@@ -38,10 +39,6 @@ export const ExpenseTable = (props: {
 
     const expenseEntries = [...props.data.expenses]
 
-    const totalAmount = expenseEntries
-        .map(([id, expense]) => expense.amount)
-        .reduce((a, b) => a + b, 0)
-
     const dateTimeFormat = new Intl.DateTimeFormat('en-GB', {
         hour12: false,
         hour: '2-digit',
@@ -50,7 +47,7 @@ export const ExpenseTable = (props: {
 
     return <>
         <div className={classes['vertical-space']}>
-            <p>Total: <span className={classes.total}>{serializeAmount(totalAmount)}</span></p>
+            <p>Total: <span className={classes.total}>{serializeAmount(props.data.totalAmount)}</span></p>
         </div>
         <table className={classes['styled-table']}>
             <thead>

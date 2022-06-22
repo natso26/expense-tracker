@@ -21,7 +21,7 @@ export const HomePage = () => {
             title: filter.title,
             tags: compactSerializeTags(filter.tags),
         }).filter(
-            ([k, v]) => v,
+            ([, v]) => v,
         )), {
             replace: true,
         })

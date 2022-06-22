@@ -31,7 +31,7 @@ export const processCombined = (input: CombinedApiFetchOutput): StoreValue => {
         tagRelations: new Map(
             [...new Set([
                 ...inclusions.keys(), ...containments.keys(),
-                ...expenseEntries.flatMap(([id, expense]) =>
+                ...expenseEntries.flatMap(([, expense]) =>
                     expense.tags),
             ])].sort()
                 .map((tag) => [
