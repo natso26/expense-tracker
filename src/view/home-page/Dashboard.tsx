@@ -1,25 +1,25 @@
 import React, {ChangeEvent} from "react";
 import {State, StateConstructor} from "../../common/state";
-import classes from './ExpenseDashboard.module.css'
-import {ExpenseTable} from "./ExpenseTable";
+import classes from './Dashboard.module.css'
+import {DashboardContents} from "./DashboardContents";
 import {parseTags, serializeTags} from "../../common/tag";
 import {parseDate, serializeForDateInput} from "../../common/date";
 import {CombinedBloc, CombinedBlocGetExpensesOutput} from "../../bloc/combined-bloc";
 
-export type ExpenseDashboardData = {
-    defaultFilter: ExpenseDashboardDataFilter,
-    filter: ExpenseDashboardDataFilter,
-    setFilterCallback: (filter: ExpenseDashboardDataFilter) => void,
+export type DashboardData = {
+    defaultFilter: DashboardDataFilter,
+    filter: DashboardDataFilter,
+    setFilterCallback: (filter: DashboardDataFilter) => void,
 }
 
-export type ExpenseDashboardDataFilter = {
+export type DashboardDataFilter = {
     date?: Date,
     title: string,
     tags: string[],
 }
 
-export const ExpenseDashboard = (props: {
-    data: ExpenseDashboardData,
+export const Dashboard = (props: {
+    data: DashboardData,
 }) => {
     type Filter = {
         date?: Date,
@@ -126,7 +126,7 @@ export const ExpenseDashboard = (props: {
 
                 case "DATA":
                     return (
-                        <ExpenseTable data={
+                        <DashboardContents data={
                             fetchExpensesOutput.data
                         }/>
                     )

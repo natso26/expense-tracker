@@ -1,12 +1,11 @@
-import {compactSerializeTags, serializeTags} from "../../common/tag";
-import classes from './ExpenseTable.module.css'
-import React, {MouseEvent} from "react";
 import {createSearchParams, useNavigate} from "react-router-dom";
+import React, {MouseEvent} from "react";
 import {serializeAmount} from "../../common/expense";
+import {compactSerializeTags, serializeTags} from "../../common/tag";
+import classes from "./ExpenseTable.module.css";
 import {onSameDate} from "../../common/date";
 
 export type ExpenseTableData = {
-    totalAmount: number,
     expenses: Map<string, ExpenseTableDataExpense>,
 }
 
@@ -45,16 +44,13 @@ export const ExpenseTable = (props: {
         minute: '2-digit',
     })
 
-    return <>
-        <div className={classes['vertical-space']}>
-            <p>Total: <span className={classes.total}>{serializeAmount(props.data.totalAmount)}</span></p>
-        </div>
+    return (
         <table className={classes['styled-table']}>
             <thead>
             <tr>
                 <th>Time</th>
                 <th>Title</th>
-                <th className={classes.amount}>Amount</th>
+                <th className={classes.number}>Amount</th>
                 <th>Tags</th>
             </tr>
             </thead>
@@ -68,11 +64,11 @@ export const ExpenseTable = (props: {
                 <tr key={id} id={id} onClick={onClickExpense}>
                     <td>{dateTimeFormat.format(expense.timestamp)}</td>
                     <td>{expense.title}</td>
-                    <td className={classes.amount}>{serializeAmount(expense.amount || undefined) || '\u2013'}</td>
+                    <td className={classes.number}>{serializeAmount(expense.amount || undefined) || '\u2013'}</td>
                     <td>{serializeTags(expense.tags)}</td>
                 </tr>
             ])}
             </tbody>
         </table>
-    </>
+    )
 }

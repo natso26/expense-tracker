@@ -35,10 +35,6 @@
     color: #009879;
 }
 
-.styled-table tbody tr .date {
-    font-weight: bold;
-}
-
 .styled-table tbody tr:nth-of-type(even) {
     background-color: #f3f3f3;
 }

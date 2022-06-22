@@ -12,12 +12,19 @@ export type CombinedBlocGetExpensesInput = {
 export type CombinedBlocGetExpensesOutput = {
     totalAmount: number,
     expenses: Map<string, ExpenseBlocExpense>,
+    tagSummaries: Map<string, CombinedBlocExpensesOutputTagSummary>,
 }
 
 export type CombinedBlocGetExpensesInputFilter = {
     date?: Date,
     title: string,
     tags: string[],
+}
+
+export type CombinedBlocExpensesOutputTagSummary = {
+    isPartOf: string[],
+    amount: number,
+    contains: string[],
 }
 
 export const CombinedBloc = {
@@ -32,17 +39,42 @@ export const CombinedBloc = {
                     (!filter.date || onReferenceDate(expense.timestamp, filter.date))
                     && expense.title.toLowerCase().includes(filter.title.toLowerCase())
                     && filter.tags.every((tag) => expense.expandedTags.has(tag)))
-                .map<[string, ExpenseBlocExpense]>(([id, expense]) => [id, {
-                    timestamp: expense.timestamp,
-                    title: expense.title,
-                    amount: expense.amount,
-                    tags: expense.tags,
-                }])
+
+            const tagRelations = combined.tagRelations
+
+            const tagSummaries = new Map<string, CombinedBlocExpensesOutputTagSummary>()
+
+            for (const [, expense] of expenseEntries) {
+                for (const tag of expense.expandedTags) {
+                    const tagRelation = tagRelations.get(tag)
+
+                    const tagSummary = tagSummaries.get(tag) || {
+                        isPartOf: tagRelation?.isPartOf ?? [],
+                        amount: 0,
+                        contains: tagRelation?.contains ?? [],
+                    }
+
+                    tagSummary.amount += expense.amount
+
+                    tagSummaries.set(tag, tagSummary)
+                }
+            }
 
             return {
                 totalAmount: expenseEntries.reduce((sum, [, expense]) =>
                     sum + expense.amount, 0),
-                expenses: new Map(expenseEntries),
+                expenses: new Map(
+                    expenseEntries.map(([id, expense]) => [id, {
+                        timestamp: expense.timestamp,
+                        title: expense.title,
+                        amount: expense.amount,
+                        tags: expense.tags,
+                    }]),
+                ),
+                tagSummaries: new Map(
+                    [...tagSummaries].sort(([, summary1], [, summary2]) =>
+                        summary2.amount - summary1.amount),
+                ),
             }
         },
     ),
