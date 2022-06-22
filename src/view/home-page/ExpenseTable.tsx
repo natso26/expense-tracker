@@ -42,6 +42,12 @@ export const ExpenseTable = (props: {
         .map(([id, expense]) => expense.amount)
         .reduce((a, b) => a + b, 0)
 
+    const dateTimeFormat = new Intl.DateTimeFormat('en-GB', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+    })
+
     return <>
         <div className={classes['vertical-space']}>
             <p>Total: <span className={classes.total}>{serializeAmount(totalAmount)}</span></p>
@@ -63,11 +69,7 @@ export const ExpenseTable = (props: {
                     </tr>
                 ),
                 <tr key={id} id={id} onClick={onClickExpense}>
-                    <td>{expense.timestamp.toLocaleTimeString('en-GB', {
-                        hour12: false,
-                        hour: '2-digit',
-                        minute: '2-digit',
-                    })}</td>
+                    <td>{dateTimeFormat.format(expense.timestamp)}</td>
                     <td>{expense.title}</td>
                     <td className={classes.amount}>{serializeAmount(expense.amount || undefined) || '\u2013'}</td>
                     <td>{serializeTags(expense.tags)}</td>

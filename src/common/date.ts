@@ -27,17 +27,17 @@ export const serializeForDateInput = (date: Date | undefined): string => {
 }
 
 export const onReferenceDate = (date: Date, referenceDate: Date): Boolean => {
-    const difference = date.valueOf() - referenceDate.valueOf()
+    const difference = date.getTime() - referenceDate.getTime()
 
     return difference >= 0 && difference < millisecondsInDay
 }
 
 export const onSameDate = (date1: Date, date2: Date): Boolean => {
-    const value1 = date1.valueOf() - date1.getTimezoneOffset() * millisecondsInMinutes
-    const value2 = date2.valueOf() - date2.getTimezoneOffset() * millisecondsInMinutes
+    const value1 = date1.getTime() - date1.getTimezoneOffset() * millisecondsInMinute
+    const value2 = date2.getTime() - date2.getTimezoneOffset() * millisecondsInMinute
 
     return value1 - value1 % millisecondsInDay === value2 - value2 % millisecondsInDay
 }
 
-const millisecondsInMinutes = 60 * 1000
-const millisecondsInDay = 24 * 60 * millisecondsInMinutes
+const millisecondsInMinute = 60 * 1000
+const millisecondsInDay = 24 * 60 * millisecondsInMinute

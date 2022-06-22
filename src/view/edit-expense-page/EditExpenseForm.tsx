@@ -59,7 +59,7 @@ export const EditExpenseForm = (props: {
         if (!confirmResp) return
 
         await ExpenseBloc.delete({
-            id: props.data.expense.id,
+            id: expense.id,
         }, (state) => {
             setSubmit(state)
 
