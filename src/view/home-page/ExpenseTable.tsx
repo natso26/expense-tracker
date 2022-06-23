@@ -64,7 +64,7 @@ export const ExpenseTable = (props: {
                 <tr key={id} id={id} onClick={onClickExpense}>
                     <td>{dateTimeFormat.format(expense.timestamp)}</td>
                     <td>{expense.title}</td>
-                    <td className={classes.number}>{serializeAmount(expense.amount || undefined) || '\u2013'}</td>
+                    <td className={classes.number}>{serializeAmount(expense.amount || null) || '\u2013'}</td>
                     <td>{serializeTags(expense.tags)}</td>
                 </tr>
             ])}

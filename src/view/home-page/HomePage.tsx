@@ -10,7 +10,7 @@ export const HomePage = () => {
     const [initialSearchParams] = React.useState<URLSearchParams>(searchParams)
 
     const parseFilter = (params: URLSearchParams): DashboardDataFilter => ({
-        date: parseDateTime(params.get('date') ?? ''),
+        date: parseDateTime(params.get('date') ?? '') || undefined,
         title: params.get('title') ?? '',
         tags: parseTags(params.get('tags') ?? ''),
     })
@@ -31,7 +31,7 @@ export const HomePage = () => {
         <h1>Expense Tracker</h1>
         <div className={[classes['vertical-space'], classes['space-between']].join(' ')}>
             <Link to='/new-expense'>New expense</Link>
-            <Link to='/summary'>Summary</Link>
+            <Link to='/export'>Export</Link>
         </div>
         <Dashboard data={{
             defaultFilter: parseFilter(initialSearchParams),

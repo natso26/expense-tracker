@@ -22,6 +22,6 @@ export const parseExpense = (input: ParseExpenseInput): ParseExpenseOutput => ({
     tags: parseTags(input.tags),
 })
 
-export const serializeAmount = (amount: number | undefined): string => (
-    amount === undefined ? '' : amount.toFixed(2)
+export const serializeAmount = (amount: number | null): string => (
+    amount === null ? '' : amount.toFixed(2)
 )

@@ -13,24 +13,24 @@ export type ExpenseDashboardContentsData = {
 export const DashboardContents = (props: {
     data: ExpenseDashboardContentsData,
 }) => {
-    type Table = 'expenses' | 'tags'
+    type View = 'expenses' | 'tags'
 
-    const [table, setTable] = React.useState<Table>('expenses')
+    const [view, setView] = React.useState<View>('expenses')
 
     const onClickChangeTabButton = () => {
-        setTable(table === 'expenses' ? 'tags' : 'expenses')
+        setView(view === 'expenses' ? 'tags' : 'expenses')
     }
 
     return <>
         <div className={classes['vertical-space']}>
             <p>Total: <span className={classes.total}>{serializeAmount(props.data.totalAmount)}</span></p>
-            <p>
-                <button onClick={onClickChangeTabButton}>{
-                    table === 'expenses' ? 'Tags view' : 'Expenses view'
-                }</button>
-            </p>
         </div>
-        {table === 'expenses'
+        <div className={classes['vertical-space']}>
+            <button onClick={onClickChangeTabButton}>{
+                view === 'expenses' ? 'Tags view' : 'Expenses view'
+            }</button>
+        </div>
+        {view === 'expenses'
             ? <ExpenseTable data={{
                 expenses: props.data.expenses,
             }}/>

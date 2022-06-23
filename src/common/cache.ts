@@ -7,18 +7,16 @@ export type Cache<T> = {
 export type CacheState<T> = CacheEmptyState | CacheValueState<T>
 
 export type CacheEmptyState = {
-    value: undefined,
     hasValue: false,
 }
 
 export type CacheValueState<T> = {
-    value: T,
     hasValue: true,
+    value: T,
 }
 
 export const makeCache = <T>(): Cache<T> => {
     let state: CacheState<T> = {
-        value: undefined,
         hasValue: false,
     }
 
@@ -26,13 +24,12 @@ export const makeCache = <T>(): Cache<T> => {
         get: () => state,
         set: (value) => {
             state = {
-                value,
                 hasValue: true,
+                value,
             }
         },
         clear: () => {
             state = {
-                value: undefined,
                 hasValue: false,
             }
         },

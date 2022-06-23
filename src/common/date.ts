@@ -1,16 +1,16 @@
-export const parseDateTime = (date: string): Date | undefined => (
-    date ? new Date(date) : undefined
+export const parseDateTime = (date: string): Date | null => (
+    date ? new Date(date) : null
 )
 
-export const parseDate = (date: string): Date | undefined => {
-    if (!date) return undefined
+export const parseDate = (date: string): Date | null => {
+    if (!date) return null
 
     const newDate = new Date(date)
     newDate.setMinutes(newDate.getMinutes() + newDate.getTimezoneOffset())
     return newDate
 }
 
-export const serializeForDateTimeInput = (date: Date | undefined): string => {
+export const serializeForDateTimeInput = (date: Date | null): string => {
     if (!date) return ''
 
     const newDate = new Date(date)
@@ -18,7 +18,7 @@ export const serializeForDateTimeInput = (date: Date | undefined): string => {
     return newDate.toISOString().slice(0, 16)
 }
 
-export const serializeForDateInput = (date: Date | undefined): string => {
+export const serializeForDateInput = (date: Date | null): string => {
     if (!date) return ''
 
     const newDate = new Date(date)

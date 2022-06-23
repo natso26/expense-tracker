@@ -46,7 +46,7 @@ export const Dashboard = (props: {
     const onDateChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFilter((filter) => ({
             ...filter,
-            date: parseDate(e.target.value),
+            date: parseDate(e.target.value) || undefined,
         }))
     }
 
@@ -71,7 +71,6 @@ export const Dashboard = (props: {
             document.querySelector<HTMLInputElement>('#tags')!.value = ''
 
             return {
-                date: undefined,
                 title: '',
                 tags: [],
             }
@@ -89,7 +88,7 @@ export const Dashboard = (props: {
                 onChange={onDateChange}
                 id="date"
                 type="date"
-                defaultValue={serializeForDateInput(defaultFilter.date)}
+                defaultValue={serializeForDateInput(defaultFilter.date || null)}
             />
             <label htmlFor="title">Title</label>
             <input

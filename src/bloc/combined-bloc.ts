@@ -22,39 +22,37 @@ export type CombinedBlocGetExpensesInputFilter = {
 }
 
 export type CombinedBlocExpensesOutputTagSummary = {
-    amount: number,
+    amount?: number,
     isPartOf: string[],
 }
 
 export const CombinedBloc = {
     getExpenses: BlocHelper.wrapWithStateCallback(
         async (input: CombinedBlocGetExpensesInput): Promise<CombinedBlocGetExpensesOutput> => {
-            const combined = await getCombined()
+            const {expenses, tagRules} = await getCombined()
 
-            const filter = input.filter
+            const {filter} = input
 
-            const expenseEntries = [...combined.expenses]
+            const expenseEntries = [...expenses]
                 .filter(([, expense]) =>
                     (!filter.date || onReferenceDate(expense.timestamp, filter.date))
                     && expense.title.toLowerCase().includes(filter.title.toLowerCase())
                     && filter.tags.every((tag) => expense.expandedTags.has(tag)))
 
-            const tagRules = combined.tagRules
-
-            const tagSummaries = new Map<string, CombinedBlocExpensesOutputTagSummary>()
+            const tagSummaries = new Map<string, CombinedBlocExpensesOutputTagSummary>(
+                [...tagRules].map(([tag, rule]) => [tag, {
+                    isPartOf: rule.isPartOf,
+                }]),
+            )
 
             for (const [, expense] of expenseEntries) {
                 for (const tag of expense.expandedTags) {
-                    const tagRule = tagRules.get(tag)
+                    const tagSummary = tagSummaries.get(tag)
 
-                    const tagSummary = tagSummaries.get(tag) || {
-                        amount: 0,
-                        isPartOf: tagRule?.isPartOf ?? [],
-                    }
-
-                    tagSummary.amount += expense.amount
-
-                    tagSummaries.set(tag, tagSummary)
+                    tagSummaries.set(tag, {
+                        amount: (tagSummary?.amount || 0) + expense.amount,
+                        isPartOf: tagSummary?.isPartOf || [],
+                    })
                 }
             }
 
@@ -71,7 +69,8 @@ export const CombinedBloc = {
                 ),
                 tagSummaries: new Map(
                     [...tagSummaries].sort(([tag1, summary1], [tag2, summary2]) =>
-                        summary2.amount - summary1.amount || tag1.localeCompare(tag2)),
+                        (summary2.amount ?? -Infinity) - (summary1.amount ?? -Infinity)
+                        || tag1.localeCompare(tag2)),
                 ),
             }
         },
