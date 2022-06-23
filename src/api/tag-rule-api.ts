@@ -1,24 +1,24 @@
 import {databaseDomain} from "./domain";
 
-export type TagRelationApiEditInput = {
+export type TagRuleApiEditInput = {
     tag: string,
-    relation: TagRelationApiRelation,
+    rule: TagRuleApiRule,
 }
 
-export type TagRelationApiRelation = {
+export type TagRuleApiRule = {
     isPartOf: string[],
 }
 
-export const TagRelationApi = {
-    edit: async (input: TagRelationApiEditInput): Promise<void> => {
+export const TagRuleApi = {
+    edit: async (input: TagRuleApiEditInput): Promise<void> => {
         const response = await fetch(
-            `${databaseDomain}/tagRelation/${input.tag}.json`,
+            `${databaseDomain}/tagRule/${input.tag}.json`,
             {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(input.relation),
+                body: JSON.stringify(input.rule),
             },
         )
 

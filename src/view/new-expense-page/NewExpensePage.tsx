@@ -35,7 +35,7 @@ export const NewExpensePage = () => {
             <Link to={-1 as any}>Back</Link>
         </div>
         <NewExpenseForm data={{
-            timestamp: timestamp,
+            timestamp,
             onSubmitCallback: onFormSubmitCallback,
         }}/>
     </>

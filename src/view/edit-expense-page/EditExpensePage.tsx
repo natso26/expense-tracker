@@ -1,5 +1,5 @@
 import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
-import classes from "../new-expense-page/NewExpensePage.module.css";
+import classes from "./EditExpensePage.module.css";
 import React from "react";
 import {EditExpenseForm} from "./EditExpenseForm";
 import {parseExpense} from "../../common/expense";
@@ -21,15 +21,13 @@ export const EditExpensePage = () => {
             <Link to={-1 as any}>Back</Link>
         </div>
         <EditExpenseForm data={{
-            expense: {
-                id: id!,
-                ...parseExpense({
-                    timestamp: searchParams.get('timestamp')!,
-                    title: searchParams.get('title')!,
-                    amount: searchParams.get('amount')!,
-                    tags: searchParams.get('tags')!,
-                }),
-            },
+            id: id!,
+            expense: parseExpense({
+                timestamp: searchParams.get('timestamp') ?? '',
+                title: searchParams.get('title') ?? '',
+                amount: searchParams.get('amount') ?? '',
+                tags: searchParams.get('tags') ?? '',
+            }),
             onSubmitCallback: onFormSubmitCallback,
         }}/>
     </>

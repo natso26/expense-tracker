@@ -1,10 +1,10 @@
 import {databaseDomain} from "./domain";
 import {ExpenseApiExpense} from "./expense-api";
-import {TagRelationApiRelation} from "./tag-relation-api";
+import {TagRuleApiRule} from "./tag-rule-api";
 
 export type CombinedApiFetchOutput = {
     expenses: Map<string, ExpenseApiExpense>,
-    tagRelations: Map<string, TagRelationApiRelation>,
+    tagRules: Map<string, TagRuleApiRule>,
 }
 
 export const CombinedApi = {
@@ -36,12 +36,12 @@ export const CombinedApi = {
                     tags: expense.tags ?? [],
                 },
             ])),
-            tagRelations: new Map(Object.entries<{
+            tagRules: new Map(Object.entries<{
                 isPartOf?: string[],
-            }>(data?.tagRelation ?? {}).map(([tag, relation]) => [
+            }>(data?.tagRule ?? {}).map(([tag, rule]) => [
                 tag,
                 {
-                    isPartOf: relation.isPartOf ?? [],
+                    isPartOf: rule.isPartOf ?? [],
                 },
             ])),
         }

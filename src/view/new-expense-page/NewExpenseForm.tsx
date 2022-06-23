@@ -48,7 +48,6 @@ export const NewExpenseForm = (props: {
                         <input
                             ref={timestampRef} id="timestamp"
                             type="datetime-local"
-                            required
                             defaultValue={serializeForDateTimeInput(props.data.timestamp)}
                         />
                         <label htmlFor="title">Title</label>

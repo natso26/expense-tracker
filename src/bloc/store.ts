@@ -2,7 +2,7 @@ import {makeCache} from "../common/cache";
 
 export type StoreValue = {
     expenses: Map<string, StoreValueExpense>,
-    tagRelations: Map<string, StoreValueTagRelation>,
+    tagRules: Map<string, StoreValueTagRule>,
 }
 
 export type StoreValueExpense = {
@@ -13,9 +13,8 @@ export type StoreValueExpense = {
     expandedTags: Set<string>, // computed
 }
 
-export type StoreValueTagRelation = {
+export type StoreValueTagRule = {
     isPartOf: string[],
-    contains: string[], // computed
 }
 
 export const Store = makeCache<StoreValue>()

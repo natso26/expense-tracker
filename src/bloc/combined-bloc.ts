@@ -22,9 +22,8 @@ export type CombinedBlocGetExpensesInputFilter = {
 }
 
 export type CombinedBlocExpensesOutputTagSummary = {
-    isPartOf: string[],
     amount: number,
-    contains: string[],
+    isPartOf: string[],
 }
 
 export const CombinedBloc = {
@@ -40,18 +39,17 @@ export const CombinedBloc = {
                     && expense.title.toLowerCase().includes(filter.title.toLowerCase())
                     && filter.tags.every((tag) => expense.expandedTags.has(tag)))
 
-            const tagRelations = combined.tagRelations
+            const tagRules = combined.tagRules
 
             const tagSummaries = new Map<string, CombinedBlocExpensesOutputTagSummary>()
 
             for (const [, expense] of expenseEntries) {
                 for (const tag of expense.expandedTags) {
-                    const tagRelation = tagRelations.get(tag)
+                    const tagRule = tagRules.get(tag)
 
                     const tagSummary = tagSummaries.get(tag) || {
-                        isPartOf: tagRelation?.isPartOf ?? [],
                         amount: 0,
-                        contains: tagRelation?.contains ?? [],
+                        isPartOf: tagRule?.isPartOf ?? [],
                     }
 
                     tagSummary.amount += expense.amount
@@ -72,8 +70,8 @@ export const CombinedBloc = {
                     }]),
                 ),
                 tagSummaries: new Map(
-                    [...tagSummaries].sort(([, summary1], [, summary2]) =>
-                        summary2.amount - summary1.amount),
+                    [...tagSummaries].sort(([tag1, summary1], [tag2, summary2]) =>
+                        summary2.amount - summary1.amount || tag1.localeCompare(tag2)),
                 ),
             }
         },

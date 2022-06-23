@@ -2,18 +2,6 @@ import {setAddAll, setDifference} from "./set";
 
 export type Graph<V> = Map<V, Set<V>>
 
-export const reverseGraph = <V>(input: Graph<V>): Graph<V> => {
-    const reversed = new Map<V, Set<V>>()
-
-    for (const [k, vs] of input) {
-        for (const v of vs) {
-            reversed.set(v, (reversed.get(v) ?? new Set()).add(k))
-        }
-    }
-
-    return reversed
-}
-
 export const transitiveClosure = <V>(input: Graph<V>): Graph<V> => {
     const closure = new Map<V, Set<V>>()
     let active = new Map<V, Set<V>>()

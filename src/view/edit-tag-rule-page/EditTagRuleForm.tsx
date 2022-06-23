@@ -1,51 +1,41 @@
 import React from "react";
 import {State, StateConstructor} from "../../common/state";
-import classes from "./EditExpenseForm.module.css";
-import {parseExpense, serializeAmount} from "../../common/expense";
-import {serializeForDateTimeInput} from "../../common/date";
+import classes from "./EditTagRuleForm.module.css";
 import {serializeTags} from "../../common/tag";
-import {ExpenseBloc} from "../../bloc/expense-bloc";
+import {TagRuleBloc} from "../../bloc/tag-rule-bloc";
+import {parseTagRule} from "../../common/tag-rule";
 
-export type EditExpenseFormData = {
-    id: string,
-    expense: EditExpenseFormDataExpense,
+export type EditTagRuleFormData = {
+    tag: string,
+    rule: EditTagRuleFormRule,
     onSubmitCallback: () => void,
 }
 
-export type EditExpenseFormDataExpense = {
-    timestamp: Date,
-    title: string,
-    amount: number,
-    tags: string[],
+export type EditTagRuleFormRule = {
+    isPartOf: string[],
 }
 
-export const EditExpenseForm = (props: {
-    data: EditExpenseFormData,
+export const EditTagRuleForm = (props: {
+    data: EditTagRuleFormData,
 }) => {
     const [submit, setSubmit] = React.useState<State<void>>(StateConstructor.IniState())
 
-    const timestampRef = React.useRef<HTMLInputElement>(null)
-    const titleRef = React.useRef<HTMLInputElement>(null)
-    const amountRef = React.useRef<HTMLInputElement>(null)
-    const tagsRef = React.useRef<HTMLInputElement>(null)
+    const isPartOfRef = React.useRef<HTMLInputElement>(null)
 
-    const id = props.data.id
-    const expense = props.data.expense
+    const tag = props.data.tag
+    const rule = props.data.rule
 
     const onSubmit = async (e: any) => {
         e.preventDefault()
 
         const input = {
-            id,
-            expense: parseExpense({
-                timestamp: timestampRef.current!.value,
-                title: titleRef.current!.value,
-                amount: amountRef.current!.value,
-                tags: tagsRef.current!.value,
+            tag,
+            rule: parseTagRule({
+                isPartOf: isPartOfRef.current!.value,
             }),
         }
 
-        await ExpenseBloc.edit(input, (state) => {
+        await TagRuleBloc.edit(input, (state) => {
             setSubmit(state)
 
             if (state.state === 'DATA') props.data.onSubmitCallback()
@@ -59,7 +49,7 @@ export const EditExpenseForm = (props: {
 
         if (!confirmResp) return
 
-        await ExpenseBloc.delete({id}, (state) => {
+        await TagRuleBloc.delete({tag}, (state) => {
             setSubmit(state)
 
             if (state.state === 'DATA') props.data.onSubmitCallback()
@@ -71,31 +61,19 @@ export const EditExpenseForm = (props: {
             return (
                 <form onSubmit={onSubmit}>
                     <div className={classes['input-grid']}>
-                        <label htmlFor="timestamp">Time</label>
+                        <label htmlFor="tag">Tag</label>
                         <input
-                            ref={timestampRef} id="timestamp"
-                            type="datetime-local"
-                            defaultValue={serializeForDateTimeInput(expense.timestamp)}
-                        />
-                        <label htmlFor="title">Title</label>
-                        <input
-                            ref={titleRef} id="title"
+                            id="tag"
                             type="text"
-                            defaultValue={expense.title}
+                            value={tag}
+                            disabled
                         />
-                        <label htmlFor="amount">Amount</label>
+                        <label htmlFor="isPartOf">Is part of</label>
                         <input
-                            ref={amountRef} id="amount"
-                            type="number"
-                            min="0" step="0.01"
-                            defaultValue={serializeAmount(expense.amount)}
-                        />
-                        <label htmlFor="tags">Tags</label>
-                        <input
-                            ref={tagsRef} id="tags"
+                            ref={isPartOfRef} id="isPartOf"
                             type="text"
                             placeholder="tag 1, tag 2"
-                            defaultValue={serializeTags(expense.tags)}
+                            defaultValue={serializeTags(rule.isPartOf)}
                         />
                     </div>
                     <div className={classes['vertical-space']}>

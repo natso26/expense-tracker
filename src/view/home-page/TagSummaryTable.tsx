@@ -9,9 +9,8 @@ export type TagSummaryTableData = {
 }
 
 export type TagSummaryTableDataSummary = {
-    isPartOf: string[],
     amount: number,
-    contains: string[],
+    isPartOf: string[],
 }
 
 export const TagSummaryTable = (props: {
@@ -24,7 +23,7 @@ export const TagSummaryTable = (props: {
         const summary = props.data.tagSummaries.get(tag)!
 
         navigate({
-            pathname: `/edit-tag/${tag}`,
+            pathname: `/edit-tag-rule/${tag}`,
             search: createSearchParams({
                 isPartOf: compactSerializeTags(summary.isPartOf),
             }).toString(),
@@ -39,7 +38,7 @@ export const TagSummaryTable = (props: {
             <tr>
                 <th>Tag</th>
                 <th className={classes.number}>Amount</th>
-                <th>Contains</th>
+                <th>Is part of</th>
             </tr>
             </thead>
             <tbody>
@@ -47,7 +46,7 @@ export const TagSummaryTable = (props: {
                 <tr key={tag} id={tag} onClick={onClickSummary}>
                     <td>{tag}</td>
                     <td className={classes.number}>{serializeAmount(summary.amount || undefined) || '\u2013'}</td>
-                    <td>{serializeTags(summary.contains)}</td>
+                    <td>{serializeTags(summary.isPartOf)}</td>
                 </tr>
             ])}
             </tbody>

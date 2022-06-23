@@ -1,4 +1,5 @@
 import {parseTags} from "./tag";
+import {parseDateTime} from "./date";
 
 export type ParseExpenseInput = {
     timestamp: string,
@@ -15,7 +16,7 @@ export type ParseExpenseOutput = {
 }
 
 export const parseExpense = (input: ParseExpenseInput): ParseExpenseOutput => ({
-    timestamp: new Date(input.timestamp),
+    timestamp: parseDateTime(input.timestamp) || new Date(),
     title: input.title.trim(),
     amount: parseFloat(input.amount || '0'),
     tags: parseTags(input.tags),
