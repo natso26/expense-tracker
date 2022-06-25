@@ -3,6 +3,7 @@ import classes from "./EditExpensePage.module.css";
 import React from "react";
 import {EditExpenseForm} from "./EditExpenseForm";
 import {parseExpense} from "../../common/expense";
+import {useNavigateBack} from "../view-utils/hooks";
 
 
 export const EditExpensePage = () => {
@@ -11,9 +12,7 @@ export const EditExpensePage = () => {
 
     const navigate = useNavigate()
 
-    const onFormSubmitCallback = React.useCallback(() => {
-        navigate(-1)
-    }, [navigate])
+    const onFormSubmitCallback = useNavigateBack(navigate)
 
     return <>
         <h1>Edit Expense</h1>

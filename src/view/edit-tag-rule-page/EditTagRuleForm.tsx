@@ -1,9 +1,10 @@
 import React from "react";
-import {State, StateConstructor} from "../../common/state";
 import classes from "./EditTagRuleForm.module.css";
 import {serializeTags} from "../../common/tag";
 import {TagRuleBloc} from "../../bloc/tag-rule-bloc";
 import {parseTagRule} from "../../common/tag-rule";
+import {useWrappedState} from "../view-utils/hooks";
+import {tagsInputPlaceholder} from "../view-utils/const";
 
 export type EditTagRuleFormData = {
     tag: string,
@@ -18,7 +19,7 @@ export type EditTagRuleFormRule = {
 export const EditTagRuleForm = (props: {
     data: EditTagRuleFormData,
 }) => {
-    const [submit, setSubmit] = React.useState<State<void>>(StateConstructor.IniState())
+    const [submit, setSubmit] = useWrappedState<void>()
 
     const isPartOfRef = React.useRef<HTMLInputElement>(null)
 
@@ -71,7 +72,7 @@ export const EditTagRuleForm = (props: {
                         <input
                             ref={isPartOfRef} id="isPartOf"
                             type="text"
-                            placeholder="tag 1, tag 2"
+                            placeholder={tagsInputPlaceholder}
                             defaultValue={serializeTags(rule.isPartOf)}
                         />
                     </div>

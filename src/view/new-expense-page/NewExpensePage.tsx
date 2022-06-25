@@ -3,15 +3,14 @@ import {Link, useNavigate, useSearchParams} from "react-router-dom";
 import classes from './NewExpensePage.module.css'
 import React from "react";
 import {parseDateTime} from "../../common/date";
+import {useNavigateBack} from "../view-utils/hooks";
 
 export const NewExpensePage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
 
     const navigate = useNavigate()
 
-    const onFormSubmitCallback = React.useCallback(() => {
-        navigate('/')
-    }, [navigate])
+    const onFormSubmitCallback = useNavigateBack(navigate)
 
     const searchParamsTimestamp = parseDateTime(searchParams.get('timestamp') ?? '')
 
@@ -23,9 +22,7 @@ export const NewExpensePage = () => {
         if (!searchParamsTimestamp) {
             setSearchParams({
                 timestamp: timestamp.toISOString(),
-            }, {
-                replace: true,
-            })
+            }, {replace: true})
         }
     }, [searchParamsTimestamp, setSearchParams, timestamp])
 

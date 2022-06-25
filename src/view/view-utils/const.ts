@@ -1,0 +1,1 @@
+export const tagsInputPlaceholder = 'tag 1, tag 2'

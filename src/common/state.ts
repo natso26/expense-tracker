@@ -19,17 +19,17 @@ export type ErrorState = {
 }
 
 export const StateConstructor = {
-    IniState: (): InitState => ({
+    Init: (): InitState => ({
         state: 'INIT',
     }),
-    LoadingState: (): LoadingState => ({
+    Loading: (): LoadingState => ({
         state: 'LOADING',
     }),
-    DataState: <T>(data: T): DataState<T> => ({
+    Data: <T>(data: T): DataState<T> => ({
         state: 'DATA',
         data: data,
     }),
-    ErrorState: (error: any): ErrorState => ({
+    Error: (error: any): ErrorState => ({
         state: 'ERROR',
         error: error,
     }),

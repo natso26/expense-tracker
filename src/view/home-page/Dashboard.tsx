@@ -1,21 +1,35 @@
 import React, {ChangeEvent} from "react";
-import {State, StateConstructor} from "../../common/state";
 import classes from './Dashboard.module.css'
 import {DashboardContents} from "./DashboardContents";
 import {parseTags, serializeTags} from "../../common/tag";
 import {parseDate, serializeForDateInput} from "../../common/date";
 import {CombinedBloc, CombinedBlocGetExpensesOutput} from "../../bloc/combined-bloc";
+import {Lens, useEffectIfNotInitial, useLens, useWrappedState} from "../view-utils/hooks";
+import {tagsInputPlaceholder} from "../view-utils/const";
 
 export type DashboardData = {
-    defaultFilter: DashboardDataFilter,
-    filter: DashboardDataFilter,
-    setFilterCallback: (filter: DashboardDataFilter) => void,
+    defaultQuery: DashboardDataQuery,
+    query: DashboardDataQuery,
+    setQueryCallback: (query: DashboardDataQuery) => void,
 }
 
-export type DashboardDataFilter = {
+export type DashboardDataQuery = {
+    view: DashboardDataQueryView,
+    filter: DashboardDataQueryFilter,
+    tagSearch: DashboardDataQueryTagSearch,
+}
+
+export type DashboardDataQueryView = 'expenses' | 'tags'
+
+export type DashboardDataQueryFilter = {
     date?: Date,
     title: string,
     tags: string[],
+}
+
+export type DashboardDataQueryTagSearch = {
+    name: string,
+    isPartOf: string[],
 }
 
 export const Dashboard = (props: {
@@ -27,21 +41,27 @@ export const Dashboard = (props: {
         tags: string[],
     }
 
-    const [filter, setFilter] = React.useState<Filter>(props.data.filter)
+    const {defaultQuery, setQueryCallback} = props.data
 
-    const [fetchExpensesOutput, setFetchExpensesOutput] = React.useState<State<CombinedBlocGetExpensesOutput>>(
-        StateConstructor.IniState(),
+    const [query, setQuery] = React.useState<DashboardDataQuery>(props.data.query)
+
+    const [filter, setFilter] = useLens<DashboardDataQuery, Filter>(
+        [query, setQuery], queryFilterLens,
     )
 
-    const setFilterCallback = props.data.setFilterCallback
+    const [view, setView] = useLens<DashboardDataQuery, DashboardDataQueryView>(
+        [query, setQuery], queryViewLens,
+    )
+
+    const [fetchExpensesOutput, setFetchExpensesOutput] = useWrappedState<CombinedBlocGetExpensesOutput>()
+
+    useEffectIfNotInitial(() => {
+        setQueryCallback(query)
+    }, [setQueryCallback, query])
 
     React.useEffect(() => {
-        (async () => {
-            setFilterCallback(filter)
-
-            await CombinedBloc.getExpenses({filter}, setFetchExpensesOutput)
-        })()
-    }, [setFilterCallback, filter])
+        CombinedBloc.getExpenses({filter}, setFetchExpensesOutput)
+    }, [filter, setFetchExpensesOutput])
 
     const onDateChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFilter((filter) => ({
@@ -71,13 +91,14 @@ export const Dashboard = (props: {
             document.querySelector<HTMLInputElement>('#tags')!.value = ''
 
             return {
+                date: undefined,
                 title: '',
                 tags: [],
             }
         })
     }
 
-    const defaultFilter = props.data.defaultFilter
+    const defaultFilter = defaultQuery.filter
 
     const isFilterNonEmpty = Boolean(filter.date || filter.title || filter.tags.length)
 
@@ -102,7 +123,7 @@ export const Dashboard = (props: {
                 onChange={onTagsChange}
                 id="tags"
                 type="search"
-                placeholder="tag 1, tag 2"
+                placeholder={tagsInputPlaceholder}
                 defaultValue={serializeTags(defaultFilter.tags)}
             />
         </div>
@@ -114,7 +135,7 @@ export const Dashboard = (props: {
         {(() => {
             switch (fetchExpensesOutput.state) {
                 case "INIT":
-                    return <></>
+                    return null
 
                 case "LOADING":
                     return (
@@ -125,9 +146,11 @@ export const Dashboard = (props: {
 
                 case "DATA":
                     return (
-                        <DashboardContents data={
-                            fetchExpensesOutput.data
-                        }/>
+                        <DashboardContents data={{
+                            data: fetchExpensesOutput.data,
+                            view,
+                            setViewCallback: setView,
+                        }}/>
                     )
 
                 case "ERROR":
@@ -140,4 +163,14 @@ export const Dashboard = (props: {
             }
         })()}
     </>
+}
+
+const queryFilterLens: Lens<DashboardDataQuery, DashboardDataQueryFilter> = {
+    view: (query) => query.filter,
+    set: (query, filter) => ({...query, filter}),
+}
+
+const queryViewLens: Lens<DashboardDataQuery, DashboardDataQueryView> = {
+    view: (query) => query.view,
+    set: (query, view) => ({...query, view}),
 }

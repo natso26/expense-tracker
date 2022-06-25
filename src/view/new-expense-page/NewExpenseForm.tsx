@@ -1,9 +1,10 @@
 import React from "react";
-import {State, StateConstructor} from "../../common/state";
 import classes from "./NewExpenseForm.module.css";
 import {parseExpense} from "../../common/expense";
 import {serializeForDateTimeInput} from "../../common/date";
 import {ExpenseBloc} from "../../bloc/expense-bloc";
+import {useWrappedState} from "../view-utils/hooks";
+import {tagsInputPlaceholder} from "../view-utils/const";
 
 export type NewExpenseFormData = {
     timestamp: Date,
@@ -13,7 +14,7 @@ export type NewExpenseFormData = {
 export const NewExpenseForm = (props: {
     data: NewExpenseFormData,
 }) => {
-    const [submit, setSubmit] = React.useState<State<void>>(StateConstructor.IniState())
+    const [submit, setSubmit] = useWrappedState<void>()
 
     const timestampRef = React.useRef<HTMLInputElement>(null)
     const titleRef = React.useRef<HTMLInputElement>(null)
@@ -65,7 +66,7 @@ export const NewExpenseForm = (props: {
                         <input
                             ref={tagsRef} id="tags"
                             type="text"
-                            placeholder="tag 1, tag 2"
+                            placeholder={tagsInputPlaceholder}
                         />
                     </div>
                     <div className={classes['vertical-space']}>

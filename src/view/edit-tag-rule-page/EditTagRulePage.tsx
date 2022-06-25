@@ -3,6 +3,7 @@ import classes from "./EditTagRulePage.module.css";
 import React from "react";
 import {EditTagRuleForm} from "./EditTagRuleForm";
 import {parseTagRule} from "../../common/tag-rule";
+import {useNavigateBack} from "../view-utils/hooks";
 
 
 export const EditTagRulePage = () => {
@@ -11,9 +12,7 @@ export const EditTagRulePage = () => {
 
     const navigate = useNavigate()
 
-    const onFormSubmitCallback = React.useCallback(() => {
-        navigate(-1)
-    }, [navigate])
+    const onFormSubmitCallback = useNavigateBack(navigate)
 
     return <>
         <h1>Edit Tag Rule</h1>
