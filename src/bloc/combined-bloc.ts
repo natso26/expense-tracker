@@ -68,9 +68,8 @@ export const CombinedBloc = {
                     }]),
                 ),
                 tagSummaries: new Map(
-                    [...tagSummaries].sort(([tag1, summary1], [tag2, summary2]) =>
-                        (summary2.amount ?? -Infinity) - (summary1.amount ?? -Infinity)
-                        || tag1.localeCompare(tag2)),
+                    [...tagSummaries].sort(([tag1,], [tag2,]) =>
+                        tag1.localeCompare(tag2)),
                 ),
             }
         },

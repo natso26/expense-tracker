@@ -22,8 +22,7 @@ export const EditTagRuleForm = (props: {
 
     const isPartOfRef = React.useRef<HTMLInputElement>(null)
 
-    const tag = props.data.tag
-    const rule = props.data.rule
+    const {tag, rule} = props.data
 
     const onSubmit = async (e: any) => {
         e.preventDefault()
@@ -45,7 +44,7 @@ export const EditTagRuleForm = (props: {
     const onClickDelete = async (e: any) => {
         e.preventDefault()
 
-        const confirmResp = window.confirm('Confirm deletion?')
+        const confirmResp = window.confirm('Confirm tag rule deletion?')
 
         if (!confirmResp) return
 

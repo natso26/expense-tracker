@@ -29,8 +29,7 @@ export const EditExpenseForm = (props: {
     const amountRef = React.useRef<HTMLInputElement>(null)
     const tagsRef = React.useRef<HTMLInputElement>(null)
 
-    const id = props.data.id
-    const expense = props.data.expense
+    const {id, expense} = props.data
 
     const onSubmit = async (e: any) => {
         e.preventDefault()
@@ -55,7 +54,7 @@ export const EditExpenseForm = (props: {
     const onClickDelete = async (e: any) => {
         e.preventDefault()
 
-        const confirmResp = window.confirm('Confirm deletion?')
+        const confirmResp = window.confirm('Confirm expense deletion?')
 
         if (!confirmResp) return
 
