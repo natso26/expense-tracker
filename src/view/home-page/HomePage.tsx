@@ -7,7 +7,6 @@ import {parseDateTime} from "../../common/date";
 
 export const HomePage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
-    const [initialSearchParams] = React.useState<URLSearchParams>(searchParams)
 
     const parseQuery = (params: URLSearchParams): DashboardDataQuery => ({
         view: params.get('view') === 'tags' ? 'tags' : 'expenses',
@@ -41,6 +40,13 @@ export const HomePage = () => {
         )), {replace: true})
     }, [setSearchParams])
 
+    const query = parseQuery(searchParams)
+
+    React.useEffect(() => {
+        setQueryCallback(query)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
     return <>
         <h1>Expense Tracker</h1>
         <div className={[classes['vertical-space'], classes['space-between']].join(' ')}>
@@ -48,8 +54,7 @@ export const HomePage = () => {
             <Link to='/export'>Export</Link>
         </div>
         <Dashboard data={{
-            defaultQuery: parseQuery(initialSearchParams),
-            query: parseQuery(searchParams),
+            query,
             setQueryCallback,
         }}/>
     </>

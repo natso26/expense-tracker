@@ -8,7 +8,6 @@ import {Lens, useEffectSkipInitial, useLens, useWrappedState} from "../view-util
 import {tagsInputPlaceholder} from "../view-utils/const";
 
 export type DashboardData = {
-    defaultQuery: DashboardDataQuery,
     query: DashboardDataQuery,
     setQueryCallback: (query: DashboardDataQuery) => void,
 }
@@ -41,17 +40,19 @@ export const Dashboard = (props: {
         tags: string[],
     }
 
-    const {defaultQuery, setQueryCallback} = props.data
+    const {setQueryCallback} = props.data
 
     const [query, setQuery] = React.useState<DashboardDataQuery>(props.data.query)
+
+    const [view, setView] = useLens<DashboardDataQuery, DashboardDataQueryView>(
+        [query, setQuery], queryViewLens,
+    )
 
     const [filter, setFilter] = useLens<DashboardDataQuery, Filter>(
         [query, setQuery], queryFilterLens,
     )
 
-    const [view, setView] = useLens<DashboardDataQuery, DashboardDataQueryView>(
-        [query, setQuery], queryViewLens,
-    )
+    const [initialFilter] = React.useState<Filter>(filter)
 
     const [fetchExpensesOutput, setFetchExpensesOutput] = useWrappedState<CombinedBlocGetExpensesOutput>()
 
@@ -98,8 +99,6 @@ export const Dashboard = (props: {
         })
     }
 
-    const defaultFilter = defaultQuery.filter
-
     const isFilterNonEmpty = Boolean(filter.date || filter.title || filter.tags.length)
 
     return <>
@@ -109,14 +108,14 @@ export const Dashboard = (props: {
                 onChange={onDateChange}
                 id="date"
                 type="date"
-                defaultValue={serializeForDateInput(defaultFilter.date || null)}
+                defaultValue={serializeForDateInput(initialFilter.date || null)}
             />
             <label htmlFor="title">Title</label>
             <input
                 onChange={onTitleChange}
                 id="title"
                 type="search"
-                defaultValue={defaultFilter.title}
+                defaultValue={initialFilter.title}
             />
             <label htmlFor="tags">Tags</label>
             <input
@@ -124,7 +123,7 @@ export const Dashboard = (props: {
                 id="tags"
                 type="search"
                 placeholder={tagsInputPlaceholder}
-                defaultValue={serializeTags(defaultFilter.tags)}
+                defaultValue={serializeTags(initialFilter.tags)}
             />
         </div>
         {isFilterNonEmpty && (
