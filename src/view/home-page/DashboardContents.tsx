@@ -3,7 +3,7 @@ import React from "react";
 import {serializeAmount} from "../../common/expense";
 import {ExpenseTable, ExpenseTableDataExpense} from "./ExpenseTable";
 import {TagSummaryTable, TagSummaryTableDataSummary} from "./TagSummaryTable";
-import {useEffectIfNotInitial} from "../view-utils/hooks";
+import {useEffectSkipInitial} from "../view-utils/hooks";
 
 export type ExpenseDashboardContentsData = {
     data: ExpenseDashboardContentsDataData,
@@ -28,7 +28,7 @@ export const DashboardContents = (props: {
 
     const [view, setView] = React.useState<View>(props.data.view)
 
-    useEffectIfNotInitial(() => {
+    useEffectSkipInitial(() => {
         setViewCallback(view)
     }, [setViewCallback, view])
 

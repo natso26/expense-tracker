@@ -1,6 +1,11 @@
 import {State, StateConstructor} from "../../common/state";
 import React, {DependencyList, Dispatch, EffectCallback, SetStateAction} from "react";
 
+export type Lens<S, T> = {
+    view: (state: S) => T,
+    set: (state: S, value: T) => S,
+}
+
 export const useWrappedState = <T>() => (
     React.useState<State<T>>(StateConstructor.Init())
 )
@@ -11,17 +16,12 @@ export const useNavigateBack = (navigate: (delta: number) => void) => (
     }, [navigate])
 )
 
-export type Lens<S, T> = {
-    view: (state: S) => T,
-    set: (state: S, value: T) => S,
-}
-
-export const useEffectIfNotInitial = (effect: EffectCallback, deps?: DependencyList) => {
-    const notInitial = React.useRef(false)
+export const useEffectSkipInitial = (effect: EffectCallback, deps?: DependencyList) => {
+    const runEffect = React.useRef(false)
 
     React.useEffect(() => {
-        if (!notInitial.current) {
-            notInitial.current = true
+        if (!runEffect.current) {
+            runEffect.current = true
             return
         }
 

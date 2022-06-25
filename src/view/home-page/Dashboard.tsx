@@ -4,7 +4,7 @@ import {DashboardContents} from "./DashboardContents";
 import {parseTags, serializeTags} from "../../common/tag";
 import {parseDate, serializeForDateInput} from "../../common/date";
 import {CombinedBloc, CombinedBlocGetExpensesOutput} from "../../bloc/combined-bloc";
-import {Lens, useEffectIfNotInitial, useLens, useWrappedState} from "../view-utils/hooks";
+import {Lens, useEffectSkipInitial, useLens, useWrappedState} from "../view-utils/hooks";
 import {tagsInputPlaceholder} from "../view-utils/const";
 
 export type DashboardData = {
@@ -55,7 +55,7 @@ export const Dashboard = (props: {
 
     const [fetchExpensesOutput, setFetchExpensesOutput] = useWrappedState<CombinedBlocGetExpensesOutput>()
 
-    useEffectIfNotInitial(() => {
+    useEffectSkipInitial(() => {
         setQueryCallback(query)
     }, [setQueryCallback, query])
 
