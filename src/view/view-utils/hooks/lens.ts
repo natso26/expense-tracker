@@ -4,6 +4,7 @@ export type Lens<S, T> = {
     view: (state: S) => T,
     set: (state: S, value: T) => S,
 }
+
 export const useLens = <S, T>(
     useState: [S, Dispatch<SetStateAction<S>>],
     lens: Lens<S, T>,
