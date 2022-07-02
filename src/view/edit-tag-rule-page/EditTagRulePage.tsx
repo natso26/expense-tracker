@@ -3,7 +3,7 @@ import classes from "./EditTagRulePage.module.css";
 import React from "react";
 import {EditTagRuleForm} from "./EditTagRuleForm";
 import {parseTagRule} from "../../common/tag-rule";
-import {useNavigateBack} from "../view-utils/hooks";
+import {useNavigateBack} from "../view-utils/hooks/helper";
 
 
 export const EditTagRulePage = () => {

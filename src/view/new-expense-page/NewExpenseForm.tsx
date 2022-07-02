@@ -3,8 +3,9 @@ import classes from "./NewExpenseForm.module.css";
 import {parseExpense} from "../../common/expense";
 import {serializeForDateTimeInput} from "../../common/date";
 import {ExpenseBloc} from "../../bloc/expense-bloc";
-import {useWrappedState} from "../view-utils/hooks";
+import {useWrappedState} from "../view-utils/hooks/helper";
 import {tagsInputPlaceholder} from "../view-utils/const";
+import {StateComponent} from "../components/state";
 
 export type NewExpenseFormData = {
     timestamp: Date,
@@ -78,22 +79,23 @@ export const NewExpenseForm = (props: {
         case "LOADING":
             return (
                 <div className={classes.loading}>
-                    <p>Loading...</p>
+                    <StateComponent.Loading/>
                 </div>
             )
 
         case "DATA":
             return (
                 <div className={classes.success}>
-                    <p>Success</p>
+                    <StateComponent.Success/>
                 </div>
             )
 
         case "ERROR":
             return (
                 <div className={classes.error}>
-                    <p>Error:</p>
-                    <p>{submit.error.message ?? 'Unknown error'}</p>
+                    <StateComponent.Error data={{
+                        error: submit.error,
+                    }}/>
                 </div>
             )
     }

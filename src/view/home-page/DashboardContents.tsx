@@ -3,7 +3,7 @@ import React from "react";
 import {serializeAmount} from "../../common/expense";
 import {ExpenseTable, ExpenseTableDataExpense} from "./ExpenseTable";
 import {TagSummaryTable, TagSummaryTableDataSummary} from "./TagSummaryTable";
-import {useEffectSkipInitial} from "../view-utils/hooks";
+import {useEffectSkipInitial} from "../view-utils/hooks/helper";
 
 export type ExpenseDashboardContentsData = {
     data: ExpenseDashboardContentsDataData,
@@ -38,7 +38,9 @@ export const DashboardContents = (props: {
 
     return <>
         <div className={classes['vertical-space']}>
-            <p>Total: <span className={classes.total}>{serializeAmount(props.data.data.totalAmount)}</span></p>
+            <p>Total: <span className={classes.total}>{
+                serializeAmount(props.data.data.totalAmount)
+            }</span></p>
         </div>
         <div className={classes['vertical-space']}>
             <button onClick={onClickChangeTabButton}>{

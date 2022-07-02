@@ -3,7 +3,7 @@ import {Link, useNavigate, useSearchParams} from "react-router-dom";
 import classes from './NewExpensePage.module.css'
 import React from "react";
 import {parseDateTime} from "../../common/date";
-import {useNavigateBack} from "../view-utils/hooks";
+import {useNavigateBack} from "../view-utils/hooks/helper";
 
 export const NewExpensePage = () => {
     const [searchParams, setSearchParams] = useSearchParams()

@@ -45,7 +45,9 @@ export const TagSummaryTable = (props: {
             {tagSummaryEntries.flatMap(([tag, summary]) => [
                 <tr key={tag} id={tag} onClick={onClickSummary}>
                     <td>{tag}</td>
-                    <td className={classes.number}>{serializeAmount(summary.amount || null) || '\u2013'}</td>
+                    <td className={classes.number}>{
+                        serializeAmount(summary.amount || null) || '\u2013'
+                    }</td>
                     <td>{serializeTags(summary.isPartOf)}</td>
                 </tr>
             ])}

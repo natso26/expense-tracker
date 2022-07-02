@@ -4,8 +4,10 @@ import {DashboardContents} from "./DashboardContents";
 import {parseTags, serializeTags} from "../../common/tag";
 import {parseDate, serializeForDateInput} from "../../common/date";
 import {CombinedBloc, CombinedBlocGetExpensesOutput} from "../../bloc/combined-bloc";
-import {Lens, useEffectSkipInitial, useLens, useWrappedState} from "../view-utils/hooks";
+import {useEffectSkipInitial, useWrappedState} from "../view-utils/hooks/helper";
 import {tagsInputPlaceholder} from "../view-utils/const";
+import {Lens, useLens} from "../view-utils/hooks/lens";
+import {StateComponent} from "../components/state";
 
 export type DashboardData = {
     query: DashboardDataQuery,
@@ -139,7 +141,7 @@ export const Dashboard = (props: {
                 case "LOADING":
                     return (
                         <div className={classes.loading}>
-                            <p>Loading...</p>
+                            <StateComponent.Loading/>
                         </div>
                     )
 
@@ -155,8 +157,9 @@ export const Dashboard = (props: {
                 case "ERROR":
                     return (
                         <div className={classes.error}>
-                            <p>Error:</p>
-                            <p>{fetchExpensesOutput.error.message ?? 'Unknown error'}</p>
+                            <StateComponent.Error data={{
+                                error: fetchExpensesOutput.error,
+                            }}/>
                         </div>
                     )
             }

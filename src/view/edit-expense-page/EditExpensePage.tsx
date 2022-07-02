@@ -3,7 +3,7 @@ import classes from "./EditExpensePage.module.css";
 import React from "react";
 import {EditExpenseForm} from "./EditExpenseForm";
 import {parseExpense} from "../../common/expense";
-import {useNavigateBack} from "../view-utils/hooks";
+import {useNavigateBack} from "../view-utils/hooks/helper";
 
 
 export const EditExpensePage = () => {

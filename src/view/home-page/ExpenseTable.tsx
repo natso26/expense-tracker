@@ -58,13 +58,17 @@ export const ExpenseTable = (props: {
             {expenseEntries.flatMap(([id, expense], index, array) => [
                 (!index || !onSameDate(expense.timestamp, array[index - 1][1].timestamp)) && (
                     <tr key={`${id}_date_header`} id={`${id}_date_header`}>
-                        <td className={classes.date} colSpan={4}>{expense.timestamp.toDateString()}</td>
+                        <td className={classes.date} colSpan={4}>{
+                            expense.timestamp.toDateString()
+                        }</td>
                     </tr>
                 ),
                 <tr key={id} id={id} onClick={onClickExpense}>
                     <td>{dateTimeFormat.format(expense.timestamp)}</td>
                     <td>{expense.title}</td>
-                    <td className={classes.number}>{serializeAmount(expense.amount || null) || '\u2013'}</td>
+                    <td className={classes.number}>{
+                        serializeAmount(expense.amount || null) || '\u2013'
+                    }</td>
                     <td>{serializeTags(expense.tags)}</td>
                 </tr>
             ])}
