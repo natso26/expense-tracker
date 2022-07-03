@@ -1,7 +1,7 @@
 import React from "react";
 import classes from './HomePage.module.css'
 import {Link, useSearchParams} from "react-router-dom";
-import {Dashboard, DashboardDataQuery} from "./Dashboard";
+import {Dashboard, DashboardDataQuery} from "./dashboard/Dashboard";
 import {compactSerializeTags, parseTags} from "../../common/tag";
 import {parseDateTime} from "../../common/date";
 
@@ -54,8 +54,10 @@ export const HomePage = () => {
             <Link to='/export'>Export</Link>
         </div>
         <Dashboard data={{
-            query,
-            setQueryCallback,
+            query: {
+                get: () => query,
+                set: setQueryCallback,
+            },
         }}/>
     </>
 }

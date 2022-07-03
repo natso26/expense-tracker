@@ -1,11 +1,11 @@
 import React from "react";
 import classes from "./EditTagRuleForm.module.css";
-import {serializeTags} from "../../common/tag";
-import {TagRuleBloc} from "../../bloc/tag-rule-bloc";
-import {parseTagRule} from "../../common/tag-rule";
-import {useWrappedState} from "../view-utils/hooks/helper";
-import {tagsInputPlaceholder} from "../view-utils/const";
-import {StateComponent} from "../components/state";
+import {serializeTags} from "../../../common/tag";
+import {TagRuleBloc} from "../../../bloc/tag-rule-bloc";
+import {parseTagRule} from "../../../common/tag-rule";
+import {useWrappedState} from "../../view-utils/hooks/helper";
+import {tagsInputPlaceholder} from "../../view-utils/const";
+import {StateComponent} from "../../components/state";
 
 export type EditTagRuleFormData = {
     tag: string,

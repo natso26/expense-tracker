@@ -1,7 +1,7 @@
 import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import classes from "./EditExpensePage.module.css";
 import React from "react";
-import {EditExpenseForm} from "./EditExpenseForm";
+import {EditExpenseForm} from "./form/EditExpenseForm";
 import {parseExpense} from "../../common/expense";
 import {useNavigateBack} from "../view-utils/hooks/helper";
 

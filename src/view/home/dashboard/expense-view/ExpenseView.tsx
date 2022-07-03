@@ -1,23 +1,23 @@
 import {createSearchParams, useNavigate} from "react-router-dom";
 import React, {MouseEvent} from "react";
-import {serializeAmount} from "../../common/expense";
-import {compactSerializeTags, serializeTags} from "../../common/tag";
-import classes from "./ExpenseTable.module.css";
-import {onSameDate} from "../../common/date";
+import {serializeAmount} from "../../../../common/expense";
+import {compactSerializeTags, serializeTags} from "../../../../common/tag";
+import classes from "./ExpenseView.module.css";
+import {onSameDate} from "../../../../common/date";
 
-export type ExpenseTableData = {
-    expenses: Map<string, ExpenseTableDataExpense>,
+export type ExpenseViewData = {
+    expenses: Map<string, ExpenseViewDataExpense>,
 }
 
-export type ExpenseTableDataExpense = {
+export type ExpenseViewDataExpense = {
     timestamp: Date,
     title: string,
     amount: number,
     tags: string[],
 }
 
-export const ExpenseTable = (props: {
-    data: ExpenseTableData,
+export const ExpenseView = (props: {
+    data: ExpenseViewData,
 }) => {
     const navigate = useNavigate()
 

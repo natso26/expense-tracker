@@ -1,17 +1,17 @@
 import React, {ChangeEvent} from "react";
 import classes from './Dashboard.module.css'
 import {DashboardContents} from "./DashboardContents";
-import {parseTags, serializeTags} from "../../common/tag";
-import {parseDate, serializeForDateInput} from "../../common/date";
-import {CombinedBloc, CombinedBlocGetExpensesOutput} from "../../bloc/combined-bloc";
-import {useEffectSkipInitial, useWrappedState} from "../view-utils/hooks/helper";
-import {tagsInputPlaceholder} from "../view-utils/const";
-import {Lens, useLens} from "../view-utils/hooks/lens";
-import {StateComponent} from "../components/state";
+import {parseTags, serializeTags} from "../../../common/tag";
+import {parseDate, serializeForDateInput} from "../../../common/date";
+import {CombinedBloc, CombinedBlocGetExpensesOutput} from "../../../bloc/combined-bloc";
+import {useEffectSkipInitial, useWrappedState} from "../../view-utils/hooks/helper";
+import {tagsInputPlaceholder} from "../../view-utils/const";
+import {Lens, useLens} from "../../view-utils/hooks/lens";
+import {StateComponent} from "../../components/state";
+import {GetSet} from "../../view-utils/type";
 
 export type DashboardData = {
-    query: DashboardDataQuery,
-    setQueryCallback: (query: DashboardDataQuery) => void,
+    query: GetSet<DashboardDataQuery>,
 }
 
 export type DashboardDataQuery = {
@@ -42,9 +42,9 @@ export const Dashboard = (props: {
         tags: string[],
     }
 
-    const {setQueryCallback} = props.data
+    const {query: {get: getQuery, set: setQueryCallback}} = props.data
 
-    const [query, setQuery] = React.useState<DashboardDataQuery>(props.data.query)
+    const [query, setQuery] = React.useState<DashboardDataQuery>(getQuery())
 
     const [view, setView] = useLens<DashboardDataQuery, DashboardDataQueryView>(
         [query, setQuery], queryViewLens,
@@ -52,6 +52,10 @@ export const Dashboard = (props: {
 
     const [filter, setFilter] = useLens<DashboardDataQuery, Filter>(
         [query, setQuery], queryFilterLens,
+    )
+
+    const [tagSearch, setTagSearch] = useLens<DashboardDataQuery, DashboardDataQueryTagSearch>(
+        [query, setQuery], queryTagSearchLens,
     )
 
     const [initialFilter] = React.useState<Filter>(filter)
@@ -149,8 +153,16 @@ export const Dashboard = (props: {
                     return (
                         <DashboardContents data={{
                             data: fetchExpensesOutput.data,
-                            view,
-                            setViewCallback: setView,
+                            query: {
+                                view: {
+                                    get: () => view,
+                                    set: setView,
+                                },
+                                tagSearch: {
+                                    get: () => tagSearch,
+                                    set: setTagSearch,
+                                },
+                            },
                         }}/>
                     )
 
@@ -175,4 +187,9 @@ const queryFilterLens: Lens<DashboardDataQuery, DashboardDataQueryFilter> = {
 const queryViewLens: Lens<DashboardDataQuery, DashboardDataQueryView> = {
     view: (query) => query.view,
     set: (query, view) => ({...query, view}),
+}
+
+const queryTagSearchLens: Lens<DashboardDataQuery, DashboardDataQueryTagSearch> = {
+    view: (query) => query.tagSearch,
+    set: (query, tagSearch) => ({...query, tagSearch}),
 }

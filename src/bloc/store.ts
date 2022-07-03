@@ -15,6 +15,7 @@ export type StoreValueExpense = {
 
 export type StoreValueTagRule = {
     isPartOf: string[],
+    expandedIsPartOf: Set<string>, // computed
 }
 
 export const Store = makeCache<StoreValue>()

@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
 import {Route, Routes} from "react-router-dom";
-import {HomePage} from "./view/home-page/HomePage";
-import {NewExpensePage} from "./view/new-expense-page/NewExpensePage";
-import {EditExpensePage} from "./view/edit-expense-page/EditExpensePage";
-import {ExportPage} from "./view/export-page/ExportPage";
-import {EditTagRulePage} from "./view/edit-tag-rule-page/EditTagRulePage";
+import {HomePage} from "./view/home/HomePage";
+import {NewExpensePage} from "./view/new-expense/NewExpensePage";
+import {EditExpensePage} from "./view/edit-expense/EditExpensePage";
+import {ExportPage} from "./view/export/ExportPage";
+import {EditTagRulePage} from "./view/edit-tag-rule/EditTagRulePage";
 
 function App() {
     return (

@@ -24,6 +24,14 @@ export const processCombined = (input: CombinedApiFetchOutput): StoreValue => {
                     ),
                 }]),
         ),
-        tagRules: input.tagRules,
+        tagRules: new Map(
+            [...input.tagRules]
+                .sort(([tag1,], [tag2,]) =>
+                    tag1.localeCompare(tag2))
+                .map(([tag, rule]) => [tag, {
+                    ...rule,
+                    expandedIsPartOf: new Set([tag, ...expandedIsPartOfs.get(tag) ?? []]),
+                }]),
+        ),
     }
 }

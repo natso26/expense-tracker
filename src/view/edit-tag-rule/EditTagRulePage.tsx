@@ -1,7 +1,7 @@
 import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import classes from "./EditTagRulePage.module.css";
 import React from "react";
-import {EditTagRuleForm} from "./EditTagRuleForm";
+import {EditTagRuleForm} from "./form/EditTagRuleForm";
 import {parseTagRule} from "../../common/tag-rule";
 import {useNavigateBack} from "../view-utils/hooks/helper";
 

@@ -1,11 +1,11 @@
 import React from "react";
 import classes from "./NewExpenseForm.module.css";
-import {parseExpense} from "../../common/expense";
-import {serializeForDateTimeInput} from "../../common/date";
-import {ExpenseBloc} from "../../bloc/expense-bloc";
-import {useWrappedState} from "../view-utils/hooks/helper";
-import {tagsInputPlaceholder} from "../view-utils/const";
-import {StateComponent} from "../components/state";
+import {parseExpense} from "../../../common/expense";
+import {serializeForDateTimeInput} from "../../../common/date";
+import {ExpenseBloc} from "../../../bloc/expense-bloc";
+import {useWrappedState} from "../../view-utils/hooks/helper";
+import {tagsInputPlaceholder} from "../../view-utils/const";
+import {StateComponent} from "../../components/state";
 
 export type NewExpenseFormData = {
     timestamp: Date,

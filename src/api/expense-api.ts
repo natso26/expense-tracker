@@ -1,4 +1,4 @@
-import {databaseDomain} from "./domain";
+import {databaseDomain} from "./const";
 
 export type ExpenseApiAddInput = {
     expense: ExpenseApiExpense,

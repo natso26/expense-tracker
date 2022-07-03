@@ -1,12 +1,12 @@
 import React from "react";
 import classes from "./EditExpenseForm.module.css";
-import {parseExpense, serializeAmount} from "../../common/expense";
-import {serializeForDateTimeInput} from "../../common/date";
-import {serializeTags} from "../../common/tag";
-import {ExpenseBloc} from "../../bloc/expense-bloc";
-import {useWrappedState} from "../view-utils/hooks/helper";
-import {tagsInputPlaceholder} from "../view-utils/const";
-import {StateComponent} from "../components/state";
+import {parseExpense, serializeAmount} from "../../../common/expense";
+import {serializeForDateTimeInput} from "../../../common/date";
+import {serializeTags} from "../../../common/tag";
+import {ExpenseBloc} from "../../../bloc/expense-bloc";
+import {useWrappedState} from "../../view-utils/hooks/helper";
+import {tagsInputPlaceholder} from "../../view-utils/const";
+import {StateComponent} from "../../components/state";
 
 export type EditExpenseFormData = {
     id: string,
@@ -56,7 +56,7 @@ export const EditExpenseForm = (props: {
     const onClickDelete = async (e: any) => {
         e.preventDefault()
 
-        const confirmResp = window.confirm('Delete expense?')
+        const confirmResp = window.confirm('Delete expense-view?')
 
         if (!confirmResp) return
 

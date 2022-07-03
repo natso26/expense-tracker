@@ -1,4 +1,4 @@
-import {NewExpenseForm} from "./NewExpenseForm";
+import {NewExpenseForm} from "./form/NewExpenseForm";
 import {Link, useNavigate, useSearchParams} from "react-router-dom";
 import classes from './NewExpensePage.module.css'
 import React from "react";

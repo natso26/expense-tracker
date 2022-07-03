@@ -1,7 +1,7 @@
 import {createSearchParams, useNavigate} from "react-router-dom";
 import React, {MouseEvent} from "react";
-import {serializeAmount} from "../../common/expense";
-import {compactSerializeTags, serializeTags} from "../../common/tag";
+import {serializeAmount} from "../../../../common/expense";
+import {compactSerializeTags, serializeTags} from "../../../../common/tag";
 import classes from "./TagSummaryTable.module.css";
 
 export type TagSummaryTableData = {
@@ -16,11 +16,13 @@ export type TagSummaryTableDataSummary = {
 export const TagSummaryTable = (props: {
     data: TagSummaryTableData,
 }) => {
+    const {tagSummaries} = props.data
+
     const navigate = useNavigate()
 
     const onClickSummary = (e: MouseEvent<HTMLTableRowElement>) => {
         const tag = e.currentTarget.id
-        const summary = props.data.tagSummaries.get(tag)!
+        const summary = tagSummaries.get(tag)!
 
         navigate({
             pathname: `/edit-tag-rule/${tag}`,
@@ -30,7 +32,7 @@ export const TagSummaryTable = (props: {
         })
     }
 
-    const tagSummaryEntries = [...props.data.tagSummaries]
+    const tagSummaryEntries = [...tagSummaries]
 
     return (
         <table className={classes['styled-table']}>

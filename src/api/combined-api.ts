@@ -1,4 +1,4 @@
-import {databaseDomain} from "./domain";
+import {databaseDomain} from "./const";
 import {ExpenseApiExpense} from "./expense-api";
 import {TagRuleApiRule} from "./tag-rule-api";
 
