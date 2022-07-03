@@ -1,8 +1,8 @@
-import {CombinedApiFetchOutput} from "../api/combined-api";
+import {CombinedApi} from "../api/combined-api";
 import {StoreValue} from "./store";
 import {transitiveClosure} from "../common/graph";
 
-export const processCombined = (input: CombinedApiFetchOutput): StoreValue => {
+export const processCombined = (input: Awaited<ReturnType<typeof CombinedApi.fetch>>): StoreValue => {
     const isPartOfs = new Map(
         [...input.tagRules].map(([tag, rule]) =>
             [tag, new Set(rule.isPartOf)]),

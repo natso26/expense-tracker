@@ -2,13 +2,11 @@ import {databaseDomain} from "./const";
 import {ExpenseApiExpense} from "./expense-api";
 import {TagRuleApiRule} from "./tag-rule-api";
 
-export type CombinedApiFetchOutput = {
-    expenses: Map<string, ExpenseApiExpense>,
-    tagRules: Map<string, TagRuleApiRule>,
-}
-
 export const CombinedApi = {
-    fetch: async (): Promise<CombinedApiFetchOutput> => {
+    fetch: async (): Promise<{
+        expenses: Map<string, ExpenseApiExpense>,
+        tagRules: Map<string, TagRuleApiRule>,
+    }> => {
         const response = await fetch(
             `${databaseDomain}.json`,
         )

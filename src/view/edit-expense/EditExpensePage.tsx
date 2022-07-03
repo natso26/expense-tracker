@@ -1,10 +1,9 @@
 import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
-import classes from "./EditExpensePage.module.css";
 import React from "react";
-import {EditExpenseForm} from "./form/EditExpenseForm";
+import {EditExpenseForm} from "./components/EditExpenseForm";
 import {parseExpense} from "../../common/expense";
 import {useNavigateBack} from "../view-utils/hooks/helper";
-
+import {VerticalMargin} from "../components/vertical-margin";
 
 export const EditExpensePage = () => {
     const {id} = useParams()
@@ -16,9 +15,9 @@ export const EditExpensePage = () => {
 
     return <>
         <h1>Edit Expense</h1>
-        <div className={classes['vertical-space']}>
+        <VerticalMargin>
             <Link to={-1 as any}>Back</Link>
-        </div>
+        </VerticalMargin>
         <EditExpenseForm data={{
             id: id!,
             expense: parseExpense({

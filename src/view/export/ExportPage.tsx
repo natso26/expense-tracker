@@ -1,13 +1,13 @@
 import {Link} from "react-router-dom";
-import classes from "./ExportPage.module.css";
 import React from "react";
+import {VerticalMargin} from "../components/vertical-margin";
 
 export const ExportPage = () => {
     return <>
         <h1>Export</h1>
-        <div className={classes['vertical-space']}>
+        <VerticalMargin>
             <Link to={-1 as any}>Back</Link>
-        </div>
+        </VerticalMargin>
         <p>Coming soon!</p>
     </>
 }

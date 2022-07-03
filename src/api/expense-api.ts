@@ -1,18 +1,5 @@
 import {databaseDomain} from "./const";
 
-export type ExpenseApiAddInput = {
-    expense: ExpenseApiExpense,
-}
-
-export type ExpenseApiEditInput = {
-    id: string,
-    expense: ExpenseApiExpense,
-}
-
-export type ExpenseApiDeleteInput = {
-    id: string,
-}
-
 export type ExpenseApiExpense = {
     timestamp: Date,
     title: string,
@@ -21,7 +8,9 @@ export type ExpenseApiExpense = {
 }
 
 export const ExpenseApi = {
-    add: async (input: ExpenseApiAddInput): Promise<void> => {
+    add: async (input: {
+        expense: ExpenseApiExpense,
+    }): Promise<void> => {
         const response = await fetch(
             `${databaseDomain}/expense.json`,
             {
@@ -39,7 +28,10 @@ export const ExpenseApi = {
             throw Error(error)
         }
     },
-    edit: async (input: ExpenseApiEditInput): Promise<void> => {
+    edit: async (input: {
+        id: string,
+        expense: ExpenseApiExpense,
+    }): Promise<void> => {
         const response = await fetch(
             `${databaseDomain}/expense/${input.id}.json`,
             {
@@ -57,7 +49,9 @@ export const ExpenseApi = {
             throw Error(error)
         }
     },
-    delete: async (input: ExpenseApiDeleteInput): Promise<void> => {
+    delete: async (input: {
+        id: string,
+    }): Promise<void> => {
         const response = await fetch(
             `${databaseDomain}/expense/${input.id}.json`,
             {

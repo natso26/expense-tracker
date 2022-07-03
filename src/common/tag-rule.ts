@@ -1,13 +1,9 @@
 import {parseTags} from "./tag";
 
-export type ParseTagRuleInput = {
+export const parseTagRule = (input: {
     isPartOf: string,
-}
-
-export type ParseTagRuleOutput = {
+}): {
     isPartOf: string[],
-}
-
-export const parseTagRule = (input: ParseTagRuleInput): ParseTagRuleOutput => ({
+} => ({
     isPartOf: parseTags(input.isPartOf),
 })

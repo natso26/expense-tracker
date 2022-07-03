@@ -5,6 +5,11 @@ export type Lens<S, T> = {
     set: (state: S, value: T) => S,
 }
 
+export const fieldLens = <S>(field: keyof S): Lens<S, any> => ({
+    view: (state) => state[field],
+    set: (state, value) => ({...state, [field]: value}),
+})
+
 export const useLens = <S, T>(
     useState: [S, Dispatch<SetStateAction<S>>],
     lens: Lens<S, T>,

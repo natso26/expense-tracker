@@ -1,35 +1,27 @@
-export type State<T> = InitState | LoadingState | DataState<T> | ErrorState
-
-export type InitState = {
+export type State<T> = {
     state: 'INIT',
-}
-
-export type LoadingState = {
+} | {
     state: 'LOADING',
-}
-
-export type DataState<T> = {
+} | {
     state: 'DATA',
     data: T,
-}
-
-export type ErrorState = {
+} | {
     state: 'ERROR',
     error: any,
 }
 
 export const StateConstructor = {
-    Init: (): InitState => ({
+    Init: <T>(): State<T> => ({
         state: 'INIT',
     }),
-    Loading: (): LoadingState => ({
+    Loading: <T>(): State<T> => ({
         state: 'LOADING',
     }),
-    Data: <T>(data: T): DataState<T> => ({
+    Data: <T>(data: T): State<T> => ({
         state: 'DATA',
         data: data,
     }),
-    Error: (error: any): ErrorState => ({
+    Error: <T>(error: any): State<T> => ({
         state: 'ERROR',
         error: error,
     }),

@@ -1,42 +1,30 @@
 import React, {ChangeEvent} from "react";
 import {parseTags, serializeTags} from "../../../../common/tag";
-import classes from "./TagSummaryView.module.css";
 import {GetSet} from "../../../view-utils/type";
 import {useEffectSkipInitial} from "../../../view-utils/hooks/helper";
 import {tagsInputPlaceholder} from "../../../view-utils/const";
 import {TagSummaryTable} from "./TagSummaryTable";
-
-export type TagSummaryViewData = {
-    tagSummaries: (tagSearch: TagSummaryViewDataSearch) => Map<string, TagSummaryViewDataSummary>,
-    tagSearch: GetSet<TagSummaryViewDataSearch>,
-}
-
-export type TagSummaryViewDataSummary = {
-    amount?: number,
-    isPartOf: string[],
-}
-
-export type TagSummaryViewDataSearch = {
-    name: string,
-    isPartOf: string[],
-}
+import {InputGrid} from "../../../components/input-grid";
+import {VerticalMargin} from "../../../components/vertical-margin";
 
 export const TagSummaryView = (props: {
-    data: TagSummaryViewData,
+    data: {
+        tagSearch: GetSet<TagSearch>,
+        tagSummaries: (tagSearch: TagSearch) => Parameters<typeof TagSummaryTable>[0]['data']['tagSummaries'],
+    },
 }) => {
-    type TagSearch = {
-        name: string,
-        isPartOf: string[],
-    }
-
     const {
-        tagSummaries: tagSummarySearcher,
         tagSearch: {get: getTagSearch, set: setTagSearchCallback},
+        tagSummaries: tagSummariesSearcher,
     } = props.data
 
     const [tagSearch, setTagSearch] = React.useState<TagSearch>(getTagSearch())
+    const {name, isPartOf} = tagSearch
 
-    const [initialTagSearch] = React.useState<TagSearch>(tagSearch)
+    const [{
+        name: initialName,
+        isPartOf: initialIsPartOf,
+    }] = React.useState<TagSearch>(tagSearch)
 
     useEffectSkipInitial(() => {
         setTagSearchCallback(tagSearch)
@@ -68,18 +56,18 @@ export const TagSummaryView = (props: {
         })
     }
 
-    const isTagSearchNonEmpty = Boolean(tagSearch.name || tagSearch.isPartOf.length)
+    const isTagSearchNonEmpty = Boolean(name || isPartOf.length)
 
-    const tagSummaries = tagSummarySearcher(tagSearch)
+    const tagSummaries = tagSummariesSearcher(tagSearch)
 
     return <>
-        <div className={classes['input-grid']}>
+        <InputGrid>
             <label htmlFor="name">Name</label>
             <input
                 onChange={onNameChange}
                 id="name"
                 type="search"
-                defaultValue={initialTagSearch.name}
+                defaultValue={initialName}
             />
             <label htmlFor="isPartOf">Is part of</label>
             <input
@@ -87,16 +75,21 @@ export const TagSummaryView = (props: {
                 id="isPartOf"
                 type="search"
                 placeholder={tagsInputPlaceholder}
-                defaultValue={serializeTags(initialTagSearch.isPartOf)}
+                defaultValue={serializeTags(initialIsPartOf)}
             />
-        </div>
+        </InputGrid>
         {isTagSearchNonEmpty && (
-            <div className={classes['vertical-space']}>
+            <VerticalMargin>
                 <button onClick={onClickClearTagSearch}>Clear tag search</button>
-            </div>
+            </VerticalMargin>
         )}
         <TagSummaryTable data={{
             tagSummaries,
         }}/>
     </>
+}
+
+type TagSearch = {
+    name: string,
+    isPartOf: string[],
 }

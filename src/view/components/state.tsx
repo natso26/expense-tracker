@@ -1,20 +1,37 @@
 import React from "react";
-
-export type ErrorStateComponentData = {
-    error: any,
-}
+import styled from "styled-components";
 
 export const StateComponent = {
     Loading: () => (
-        <p>Loading...</p>
+        <Styled.LoadingDiv>
+            <p>Loading...</p>
+        </Styled.LoadingDiv>
     ),
     Success: () => (
-        <p>Success</p>
+        <Styled.SuccessDiv>
+            <p>Success</p>
+        </Styled.SuccessDiv>
     ),
     Error: (props: {
-        data: ErrorStateComponentData,
-    }) => <>
-        <p>Error:</p>
-        <p>{props.data.error.message ?? 'Unknown error'}</p>
-    </>,
+        data: {
+            error: any,
+        },
+    }) => (
+        <Styled.ErrorDiv>
+            <p>Error:</p>
+            <p>{props.data.error.message ?? 'Unknown error'}</p>
+        </Styled.ErrorDiv>
+    ),
+}
+
+const Styled = {
+    LoadingDiv: styled.div`
+      color: blue;
+    `,
+    SuccessDiv: styled.div`
+      color: green;
+    `,
+    ErrorDiv: styled.div`
+      color: red;
+    `,
 }

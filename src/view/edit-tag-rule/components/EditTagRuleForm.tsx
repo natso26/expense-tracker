@@ -1,30 +1,32 @@
 import React from "react";
-import classes from "./EditTagRuleForm.module.css";
 import {serializeTags} from "../../../common/tag";
 import {TagRuleBloc} from "../../../bloc/tag-rule-bloc";
 import {parseTagRule} from "../../../common/tag-rule";
 import {useWrappedState} from "../../view-utils/hooks/helper";
 import {tagsInputPlaceholder} from "../../view-utils/const";
 import {StateComponent} from "../../components/state";
-
-export type EditTagRuleFormData = {
-    tag: string,
-    rule: EditTagRuleFormRule,
-    onSubmitCallback: () => void,
-}
-
-export type EditTagRuleFormRule = {
-    isPartOf: string[],
-}
+import {InputGrid} from "../../components/input-grid";
+import {VerticalMargin} from "../../components/vertical-margin";
+import {Button} from "../../components/button";
 
 export const EditTagRuleForm = (props: {
-    data: EditTagRuleFormData,
+    data: {
+        tag: string,
+        rule: {
+            isPartOf: string[],
+        },
+        onSubmitCallback: () => void,
+    },
 }) => {
+    const {
+        tag,
+        rule: {isPartOf},
+        onSubmitCallback,
+    } = props.data
+
     const [submit, setSubmit] = useWrappedState<void>()
 
     const isPartOfRef = React.useRef<HTMLInputElement>(null)
-
-    const {tag, rule} = props.data
 
     const onSubmit = async (e: any) => {
         e.preventDefault()
@@ -39,7 +41,7 @@ export const EditTagRuleForm = (props: {
         await TagRuleBloc.edit(input, (state) => {
             setSubmit(state)
 
-            if (state.state === 'DATA') props.data.onSubmitCallback()
+            if (state.state === 'DATA') onSubmitCallback()
         })
     }
 
@@ -53,7 +55,7 @@ export const EditTagRuleForm = (props: {
         await TagRuleBloc.delete({tag}, (state) => {
             setSubmit(state)
 
-            if (state.state === 'DATA') props.data.onSubmitCallback()
+            if (state.state === 'DATA') onSubmitCallback()
         })
     }
 
@@ -61,7 +63,7 @@ export const EditTagRuleForm = (props: {
         case "INIT":
             return (
                 <form onSubmit={onSubmit}>
-                    <div className={classes['input-grid']}>
+                    <InputGrid>
                         <label htmlFor="tag">Tag</label>
                         <input
                             id="tag"
@@ -74,39 +76,33 @@ export const EditTagRuleForm = (props: {
                             ref={isPartOfRef} id="isPartOf"
                             type="text"
                             placeholder={tagsInputPlaceholder}
-                            defaultValue={serializeTags(rule.isPartOf)}
+                            defaultValue={serializeTags(isPartOf)}
                         />
-                    </div>
-                    <div className={classes['vertical-space']}>
+                    </InputGrid>
+                    <VerticalMargin>
                         <button>Submit</button>
-                    </div>
-                    <div className={classes['vertical-space']} onClick={onClickDelete}>
-                        <button className={classes['delete-btn']}>Delete</button>
-                    </div>
+                    </VerticalMargin>
+                    <VerticalMargin onClick={onClickDelete}>
+                        <Button.Delete>Delete</Button.Delete>
+                    </VerticalMargin>
                 </form>
             )
 
         case "LOADING":
             return (
-                <div className={classes.loading}>
-                    <StateComponent.Loading/>
-                </div>
+                <StateComponent.Loading/>
             )
 
         case "DATA":
             return (
-                <div className={classes.success}>
-                    <StateComponent.Success/>
-                </div>
+                <StateComponent.Success/>
             )
 
         case "ERROR":
             return (
-                <div className={classes.error}>
-                    <StateComponent.Error data={{
-                        error: submit.error,
-                    }}/>
-                </div>
+                <StateComponent.Error data={{
+                    error: submit.error,
+                }}/>
             )
     }
 }

@@ -4,13 +4,9 @@ export type Cache<T> = {
     clear: () => void,
 }
 
-export type CacheState<T> = CacheEmptyState | CacheValueState<T>
-
-export type CacheEmptyState = {
+export type CacheState<T> = {
     hasValue: false,
-}
-
-export type CacheValueState<T> = {
+} | {
     hasValue: true,
     value: T,
 }

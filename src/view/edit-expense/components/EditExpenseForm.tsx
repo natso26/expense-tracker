@@ -1,20 +1,33 @@
 import React from "react";
-import classes from "./NewExpenseForm.module.css";
-import {parseExpense} from "../../../common/expense";
+import {parseExpense, serializeAmount} from "../../../common/expense";
 import {serializeForDateTimeInput} from "../../../common/date";
+import {serializeTags} from "../../../common/tag";
 import {ExpenseBloc} from "../../../bloc/expense-bloc";
 import {useWrappedState} from "../../view-utils/hooks/helper";
 import {tagsInputPlaceholder} from "../../view-utils/const";
 import {StateComponent} from "../../components/state";
+import {InputGrid} from "../../components/input-grid";
+import {VerticalMargin} from "../../components/vertical-margin";
+import {Button} from "../../components/button";
 
-export type NewExpenseFormData = {
-    timestamp: Date,
-    onSubmitCallback: () => void,
-}
-
-export const NewExpenseForm = (props: {
-    data: NewExpenseFormData,
+export const EditExpenseForm = (props: {
+    data: {
+        id: string,
+        expense: {
+            timestamp: Date,
+            title: string,
+            amount: number,
+            tags: string[],
+        },
+        onSubmitCallback: () => void,
+    },
 }) => {
+    const {
+        id,
+        expense: {timestamp, title, amount, tags},
+        onSubmitCallback
+    } = props.data
+
     const [submit, setSubmit] = useWrappedState<void>()
 
     const timestampRef = React.useRef<HTMLInputElement>(null)
@@ -26,6 +39,7 @@ export const NewExpenseForm = (props: {
         e.preventDefault()
 
         const input = {
+            id,
             expense: parseExpense({
                 timestamp: timestampRef.current!.value,
                 title: titleRef.current!.value,
@@ -34,10 +48,24 @@ export const NewExpenseForm = (props: {
             }),
         }
 
-        await ExpenseBloc.add(input, (state) => {
+        await ExpenseBloc.edit(input, (state) => {
             setSubmit(state)
 
-            if (state.state === 'DATA') props.data.onSubmitCallback()
+            if (state.state === 'DATA') onSubmitCallback()
+        })
+    }
+
+    const onClickDelete = async (e: any) => {
+        e.preventDefault()
+
+        const confirmResp = window.confirm('Delete expense?')
+
+        if (!confirmResp) return
+
+        await ExpenseBloc.delete({id}, (state) => {
+            setSubmit(state)
+
+            if (state.state === 'DATA') onSubmitCallback()
         })
     }
 
@@ -45,58 +73,58 @@ export const NewExpenseForm = (props: {
         case "INIT":
             return (
                 <form onSubmit={onSubmit}>
-                    <div className={classes['input-grid']}>
+                    <InputGrid>
                         <label htmlFor="timestamp">Time</label>
                         <input
                             ref={timestampRef} id="timestamp"
                             type="datetime-local"
-                            defaultValue={serializeForDateTimeInput(props.data.timestamp)}
+                            defaultValue={serializeForDateTimeInput(timestamp)}
                         />
                         <label htmlFor="title">Title</label>
                         <input
                             ref={titleRef} id="title"
                             type="text"
+                            defaultValue={title}
                         />
                         <label htmlFor="amount">Amount</label>
                         <input
                             ref={amountRef} id="amount"
                             type="number"
                             min="0" step="0.01"
+                            defaultValue={serializeAmount(amount)}
                         />
                         <label htmlFor="tags">Tags</label>
                         <input
                             ref={tagsRef} id="tags"
                             type="text"
                             placeholder={tagsInputPlaceholder}
+                            defaultValue={serializeTags(tags)}
                         />
-                    </div>
-                    <div className={classes['vertical-space']}>
+                    </InputGrid>
+                    <VerticalMargin>
                         <button>Submit</button>
-                    </div>
+                    </VerticalMargin>
+                    <VerticalMargin onClick={onClickDelete}>
+                        <Button.Delete>Delete</Button.Delete>
+                    </VerticalMargin>
                 </form>
             )
 
         case "LOADING":
             return (
-                <div className={classes.loading}>
-                    <StateComponent.Loading/>
-                </div>
+                <StateComponent.Loading/>
             )
 
         case "DATA":
             return (
-                <div className={classes.success}>
-                    <StateComponent.Success/>
-                </div>
+                <StateComponent.Success/>
             )
 
         case "ERROR":
             return (
-                <div className={classes.error}>
-                    <StateComponent.Error data={{
-                        error: submit.error,
-                    }}/>
-                </div>
+                <StateComponent.Error data={{
+                    error: submit.error,
+                }}/>
             )
     }
 }

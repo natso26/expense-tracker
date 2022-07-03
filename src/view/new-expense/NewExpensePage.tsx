@@ -1,9 +1,9 @@
-import {NewExpenseForm} from "./form/NewExpenseForm";
+import {NewExpenseForm} from "./components/NewExpenseForm";
 import {Link, useNavigate, useSearchParams} from "react-router-dom";
-import classes from './NewExpensePage.module.css'
 import React from "react";
 import {parseDateTime} from "../../common/date";
 import {useNavigateBack} from "../view-utils/hooks/helper";
+import {VerticalMargin} from "../components/vertical-margin";
 
 export const NewExpensePage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -28,9 +28,9 @@ export const NewExpensePage = () => {
 
     return <>
         <h1>New Expense</h1>
-        <div className={classes['vertical-space']}>
+        <VerticalMargin>
             <Link to={-1 as any}>Back</Link>
-        </div>
+        </VerticalMargin>
         <NewExpenseForm data={{
             timestamp,
             onSubmitCallback: onFormSubmitCallback,

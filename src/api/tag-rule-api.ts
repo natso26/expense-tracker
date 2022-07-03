@@ -1,16 +1,14 @@
 import {databaseDomain} from "./const";
 
-export type TagRuleApiEditInput = {
-    tag: string,
-    rule: TagRuleApiRule,
-}
-
 export type TagRuleApiRule = {
     isPartOf: string[],
 }
 
 export const TagRuleApi = {
-    edit: async (input: TagRuleApiEditInput): Promise<void> => {
+    edit: async (input: {
+        tag: string,
+        rule: TagRuleApiRule,
+    }): Promise<void> => {
         const response = await fetch(
             `${databaseDomain}/tagRule/${input.tag}.json`,
             {

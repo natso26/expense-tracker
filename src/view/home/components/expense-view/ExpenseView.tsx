@@ -2,28 +2,26 @@ import {createSearchParams, useNavigate} from "react-router-dom";
 import React, {MouseEvent} from "react";
 import {serializeAmount} from "../../../../common/expense";
 import {compactSerializeTags, serializeTags} from "../../../../common/tag";
-import classes from "./ExpenseView.module.css";
 import {onSameDate} from "../../../../common/date";
-
-export type ExpenseViewData = {
-    expenses: Map<string, ExpenseViewDataExpense>,
-}
-
-export type ExpenseViewDataExpense = {
-    timestamp: Date,
-    title: string,
-    amount: number,
-    tags: string[],
-}
+import {Table} from "../../../components/table";
 
 export const ExpenseView = (props: {
-    data: ExpenseViewData,
+    data: {
+        expenses: Map<string, {
+            timestamp: Date,
+            title: string,
+            amount: number,
+            tags: string[],
+        }>,
+    },
 }) => {
+    const {expenses} = props.data
+
     const navigate = useNavigate()
 
     const onClickExpense = (e: MouseEvent<HTMLTableRowElement>) => {
         const id = e.currentTarget.id
-        const expense = props.data.expenses.get(id)!
+        const expense = expenses.get(id)!
 
         navigate({
             pathname: `/edit-expense/${id}`,
@@ -36,43 +34,43 @@ export const ExpenseView = (props: {
         })
     }
 
-    const expenseEntries = [...props.data.expenses]
-
-    const dateTimeFormat = new Intl.DateTimeFormat('en-GB', {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-    })
+    const expenseEntries = [...expenses]
 
     return (
-        <table className={classes['styled-table']}>
+        <Table.Table>
             <thead>
             <tr>
                 <th>Time</th>
                 <th>Title</th>
-                <th className={classes.number}>Amount</th>
+                <Table.Number.Data>Amount</Table.Number.Data>
                 <th>Tags</th>
             </tr>
             </thead>
             <tbody>
             {expenseEntries.flatMap(([id, expense], index, array) => [
                 (!index || !onSameDate(expense.timestamp, array[index - 1][1].timestamp)) && (
-                    <tr key={`${id}_date_header`} id={`${id}_date_header`}>
-                        <td className={classes.date} colSpan={4}>{
+                    <Table.Date.Row key={`${id}_date_header`} id={`${id}_date_header`}>
+                        <td colSpan={4}>{
                             expense.timestamp.toDateString()
                         }</td>
-                    </tr>
+                    </Table.Date.Row>
                 ),
                 <tr key={id} id={id} onClick={onClickExpense}>
                     <td>{dateTimeFormat.format(expense.timestamp)}</td>
                     <td>{expense.title}</td>
-                    <td className={classes.number}>{
+                    <Table.Number.Data>{
                         serializeAmount(expense.amount || null) || '\u2013'
-                    }</td>
+                    }</Table.Number.Data>
                     <td>{serializeTags(expense.tags)}</td>
                 </tr>
             ])}
             </tbody>
-        </table>
+        </Table.Table>
     )
 }
+
+const dateTimeFormat = new Intl.DateTimeFormat('en-GB', {
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+})

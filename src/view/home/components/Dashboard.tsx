@@ -1,66 +1,49 @@
 import React, {ChangeEvent} from "react";
-import classes from './Dashboard.module.css'
 import {DashboardContents} from "./DashboardContents";
 import {parseTags, serializeTags} from "../../../common/tag";
 import {parseDate, serializeForDateInput} from "../../../common/date";
-import {CombinedBloc, CombinedBlocGetExpensesOutput} from "../../../bloc/combined-bloc";
+import {CombinedBloc} from "../../../bloc/combined-bloc";
 import {useEffectSkipInitial, useWrappedState} from "../../view-utils/hooks/helper";
 import {tagsInputPlaceholder} from "../../view-utils/const";
-import {Lens, useLens} from "../../view-utils/hooks/lens";
+import {fieldLens, Lens, useLens} from "../../view-utils/hooks/lens";
 import {StateComponent} from "../../components/state";
 import {GetSet} from "../../view-utils/type";
-
-export type DashboardData = {
-    query: GetSet<DashboardDataQuery>,
-}
+import {InputGrid} from "../../components/input-grid";
+import {VerticalMargin} from "../../components/vertical-margin";
+import {State} from "../../../common/state";
 
 export type DashboardDataQuery = {
-    view: DashboardDataQueryView,
-    filter: DashboardDataQueryFilter,
-    tagSearch: DashboardDataQueryTagSearch,
-}
-
-export type DashboardDataQueryView = 'expenses' | 'tags'
-
-export type DashboardDataQueryFilter = {
-    date?: Date,
-    title: string,
-    tags: string[],
-}
-
-export type DashboardDataQueryTagSearch = {
-    name: string,
-    isPartOf: string[],
+    view: Parameters<typeof DashboardContents>[0]['data']['query']['view'] extends GetSet<infer T> ? T : never,
+    filter: Filter,
+    tagSearch: Parameters<typeof DashboardContents>[0]['data']['query']['tagSearch'] extends GetSet<infer T> ? T : never,
 }
 
 export const Dashboard = (props: {
-    data: DashboardData,
+    data: {
+        query: GetSet<DashboardDataQuery>,
+    },
 }) => {
-    type Filter = {
-        date?: Date,
-        title: string,
-        tags: string[],
-    }
-
-    const {query: {get: getQuery, set: setQueryCallback}} = props.data
+    const {
+        query: {get: getQuery, set: setQueryCallback},
+    } = props.data
 
     const [query, setQuery] = React.useState<DashboardDataQuery>(getQuery())
 
-    const [view, setView] = useLens<DashboardDataQuery, DashboardDataQueryView>(
-        [query, setQuery], queryViewLens,
-    )
+    const [view, setView] = useLens([query, setQuery], queryViewLens)
 
-    const [filter, setFilter] = useLens<DashboardDataQuery, Filter>(
-        [query, setQuery], queryFilterLens,
-    )
+    const [filter, setFilter] = useLens([query, setQuery], queryFilterLens)
+    const {date, title, tags} = filter
 
-    const [tagSearch, setTagSearch] = useLens<DashboardDataQuery, DashboardDataQueryTagSearch>(
-        [query, setQuery], queryTagSearchLens,
-    )
+    const [tagSearch, setTagSearch] = useLens([query, setQuery], queryTagSearchLens)
 
-    const [initialFilter] = React.useState<Filter>(filter)
+    const [{
+        date: initialDate,
+        title: initialTitle,
+        tags: initialTags,
+    }] = React.useState<Filter>(filter)
 
-    const [fetchExpensesOutput, setFetchExpensesOutput] = useWrappedState<CombinedBlocGetExpensesOutput>()
+    const [fetchExpensesOutput, setFetchExpensesOutput] =
+        useWrappedState<Parameters<Parameters<typeof CombinedBloc.getExpenses>[1]>[0] extends State<infer I> ? I : never>()
 
     useEffectSkipInitial(() => {
         setQueryCallback(query)
@@ -105,23 +88,23 @@ export const Dashboard = (props: {
         })
     }
 
-    const isFilterNonEmpty = Boolean(filter.date || filter.title || filter.tags.length)
+    const isFilterNonEmpty = Boolean(date || title || tags.length)
 
     return <>
-        <div className={classes['input-grid']}>
+        <InputGrid>
             <label htmlFor="date">Date</label>
             <input
                 onChange={onDateChange}
                 id="date"
                 type="date"
-                defaultValue={serializeForDateInput(initialFilter.date || null)}
+                defaultValue={serializeForDateInput(initialDate || null)}
             />
             <label htmlFor="title">Title</label>
             <input
                 onChange={onTitleChange}
                 id="title"
                 type="search"
-                defaultValue={initialFilter.title}
+                defaultValue={initialTitle}
             />
             <label htmlFor="tags">Tags</label>
             <input
@@ -129,13 +112,13 @@ export const Dashboard = (props: {
                 id="tags"
                 type="search"
                 placeholder={tagsInputPlaceholder}
-                defaultValue={serializeTags(initialFilter.tags)}
+                defaultValue={serializeTags(initialTags)}
             />
-        </div>
+        </InputGrid>
         {isFilterNonEmpty && (
-            <div className={classes['vertical-space']}>
+            <VerticalMargin>
                 <button onClick={onClickClearFilter}>Clear filter</button>
-            </div>
+            </VerticalMargin>
         )}
         {(() => {
             switch (fetchExpensesOutput.state) {
@@ -144,15 +127,12 @@ export const Dashboard = (props: {
 
                 case "LOADING":
                     return (
-                        <div className={classes.loading}>
-                            <StateComponent.Loading/>
-                        </div>
+                        <StateComponent.Loading/>
                     )
 
                 case "DATA":
                     return (
                         <DashboardContents data={{
-                            data: fetchExpensesOutput.data,
                             query: {
                                 view: {
                                     get: () => view,
@@ -163,33 +143,29 @@ export const Dashboard = (props: {
                                     set: setTagSearch,
                                 },
                             },
+                            result: fetchExpensesOutput.data,
                         }}/>
                     )
 
                 case "ERROR":
                     return (
-                        <div className={classes.error}>
-                            <StateComponent.Error data={{
-                                error: fetchExpensesOutput.error,
-                            }}/>
-                        </div>
+                        <StateComponent.Error data={{
+                            error: fetchExpensesOutput.error,
+                        }}/>
                     )
             }
         })()}
     </>
 }
 
-const queryFilterLens: Lens<DashboardDataQuery, DashboardDataQueryFilter> = {
-    view: (query) => query.filter,
-    set: (query, filter) => ({...query, filter}),
+type Filter = {
+    date?: Date,
+    title: string,
+    tags: string[],
 }
 
-const queryViewLens: Lens<DashboardDataQuery, DashboardDataQueryView> = {
-    view: (query) => query.view,
-    set: (query, view) => ({...query, view}),
-}
+const queryFilterLens: Lens<DashboardDataQuery, DashboardDataQuery['filter']> = fieldLens('filter')
 
-const queryTagSearchLens: Lens<DashboardDataQuery, DashboardDataQueryTagSearch> = {
-    view: (query) => query.tagSearch,
-    set: (query, tagSearch) => ({...query, tagSearch}),
-}
+const queryViewLens: Lens<DashboardDataQuery, DashboardDataQuery['view']> = fieldLens('view')
+
+const queryTagSearchLens: Lens<DashboardDataQuery, DashboardDataQuery['tagSearch']> = fieldLens('tagSearch')

@@ -1,10 +1,9 @@
 import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
-import classes from "./EditTagRulePage.module.css";
 import React from "react";
-import {EditTagRuleForm} from "./form/EditTagRuleForm";
+import {EditTagRuleForm} from "./components/EditTagRuleForm";
 import {parseTagRule} from "../../common/tag-rule";
 import {useNavigateBack} from "../view-utils/hooks/helper";
-
+import {VerticalMargin} from "../components/vertical-margin";
 
 export const EditTagRulePage = () => {
     const {tag} = useParams()
@@ -16,9 +15,9 @@ export const EditTagRulePage = () => {
 
     return <>
         <h1>Edit Tag Rule</h1>
-        <div className={classes['vertical-space']}>
+        <VerticalMargin>
             <Link to={-1 as any}>Back</Link>
-        </div>
+        </VerticalMargin>
         <EditTagRuleForm data={{
             tag: tag!,
             rule: parseTagRule({

@@ -1,9 +1,10 @@
 import React from "react";
-import classes from './HomePage.module.css'
 import {Link, useSearchParams} from "react-router-dom";
-import {Dashboard, DashboardDataQuery} from "./dashboard/Dashboard";
+import {Dashboard, DashboardDataQuery} from "./components/Dashboard";
 import {compactSerializeTags, parseTags} from "../../common/tag";
 import {parseDateTime} from "../../common/date";
+import {VerticalMargin} from "../components/vertical-margin";
+import {MenuBar} from "../components/menu-bar";
 
 export const HomePage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -49,10 +50,12 @@ export const HomePage = () => {
 
     return <>
         <h1>Expense Tracker</h1>
-        <div className={[classes['vertical-space'], classes['space-between']].join(' ')}>
-            <Link to='/new-expense'>New expense</Link>
-            <Link to='/export'>Export</Link>
-        </div>
+        <VerticalMargin>
+            <MenuBar>
+                <Link to='/new-expense'>New expense</Link>
+                <Link to='/export'>Export</Link>
+            </MenuBar>
+        </VerticalMargin>
         <Dashboard data={{
             query: {
                 get: () => query,

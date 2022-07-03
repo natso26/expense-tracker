@@ -2,19 +2,15 @@ import {createSearchParams, useNavigate} from "react-router-dom";
 import React, {MouseEvent} from "react";
 import {serializeAmount} from "../../../../common/expense";
 import {compactSerializeTags, serializeTags} from "../../../../common/tag";
-import classes from "./TagSummaryTable.module.css";
-
-export type TagSummaryTableData = {
-    tagSummaries: Map<string, TagSummaryTableDataSummary>,
-}
-
-export type TagSummaryTableDataSummary = {
-    amount?: number,
-    isPartOf: string[],
-}
+import {Table} from "../../../components/table";
 
 export const TagSummaryTable = (props: {
-    data: TagSummaryTableData,
+    data: {
+        tagSummaries: Map<string, {
+            amount?: number,
+            isPartOf: string[],
+        }>,
+    },
 }) => {
     const {tagSummaries} = props.data
 
@@ -35,11 +31,11 @@ export const TagSummaryTable = (props: {
     const tagSummaryEntries = [...tagSummaries]
 
     return (
-        <table className={classes['styled-table']}>
+        <Table.Table>
             <thead>
             <tr>
                 <th>Tag</th>
-                <th className={classes.number}>Amount</th>
+                <Table.Number.Header>Amount</Table.Number.Header>
                 <th>Is part of</th>
             </tr>
             </thead>
@@ -47,13 +43,13 @@ export const TagSummaryTable = (props: {
             {tagSummaryEntries.flatMap(([tag, summary]) => [
                 <tr key={tag} id={tag} onClick={onClickSummary}>
                     <td>{tag}</td>
-                    <td className={classes.number}>{
+                    <Table.Number.Data>{
                         serializeAmount(summary.amount || null) || '\u2013'
-                    }</td>
+                    }</Table.Number.Data>
                     <td>{serializeTags(summary.isPartOf)}</td>
                 </tr>
             ])}
             </tbody>
-        </table>
+        </Table.Table>
     )
 }
