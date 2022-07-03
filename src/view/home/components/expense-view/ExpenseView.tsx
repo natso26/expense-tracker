@@ -42,25 +42,25 @@ export const ExpenseView = (props: {
             <tr>
                 <th>Time</th>
                 <th>Title</th>
-                <Table.Number.Data>Amount</Table.Number.Data>
+                <Table.Header.Number>Amount</Table.Header.Number>
                 <th>Tags</th>
             </tr>
             </thead>
             <tbody>
             {expenseEntries.flatMap(([id, expense], index, array) => [
                 (!index || !onSameDate(expense.timestamp, array[index - 1][1].timestamp)) && (
-                    <Table.Date.Row key={`${id}_date_header`} id={`${id}_date_header`}>
+                    <Table.Row.Date key={`${id}_date_row`} id={`${id}_date_row`}>
                         <td colSpan={4}>{
                             expense.timestamp.toDateString()
                         }</td>
-                    </Table.Date.Row>
+                    </Table.Row.Date>
                 ),
                 <tr key={id} id={id} onClick={onClickExpense}>
                     <td>{dateTimeFormat.format(expense.timestamp)}</td>
                     <td>{expense.title}</td>
-                    <Table.Number.Data>{
+                    <Table.Data.Number>{
                         serializeAmount(expense.amount || null) || '\u2013'
-                    }</Table.Number.Data>
+                    }</Table.Data.Number>
                     <td>{serializeTags(expense.tags)}</td>
                 </tr>
             ])}

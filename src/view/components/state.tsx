@@ -3,35 +3,35 @@ import styled from "styled-components";
 
 export const StateComponent = {
     Loading: () => (
-        <Styled.LoadingDiv>
+        <Styled.Loading>
             <p>Loading...</p>
-        </Styled.LoadingDiv>
+        </Styled.Loading>
     ),
     Success: () => (
-        <Styled.SuccessDiv>
+        <Styled.Success>
             <p>Success</p>
-        </Styled.SuccessDiv>
+        </Styled.Success>
     ),
     Error: (props: {
         data: {
             error: any,
         },
     }) => (
-        <Styled.ErrorDiv>
+        <Styled.Error>
             <p>Error:</p>
             <p>{props.data.error.message ?? 'Unknown error'}</p>
-        </Styled.ErrorDiv>
+        </Styled.Error>
     ),
 }
 
 const Styled = {
-    LoadingDiv: styled.div`
+    Loading: styled.div`
       color: blue;
     `,
-    SuccessDiv: styled.div`
+    Success: styled.div`
       color: green;
     `,
-    ErrorDiv: styled.div`
+    Error: styled.div`
       color: red;
     `,
 }

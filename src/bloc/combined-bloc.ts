@@ -26,15 +26,15 @@ export const CombinedBloc = {
                 isPartOf: string[],
             }) => Map<string, CombinedBlocTagSummary>,
         }> => {
-            const {filter} = input
+            const {filter: {date, title, tags}} = input
 
             const {expenses, tagRules} = await getCombined()
 
             const expenseEntries = [...expenses]
                 .filter(([, expense]) =>
-                    (!filter.date || onReferenceDate(expense.timestamp, filter.date))
-                    && expense.title.toLowerCase().includes(filter.title.toLowerCase())
-                    && filter.tags.every((tag) => expense.expandedTags.has(tag)))
+                    (!date || onReferenceDate(expense.timestamp, date))
+                    && expense.title.toLowerCase().includes(title.toLowerCase())
+                    && tags.every((tag) => expense.expandedTags.has(tag)))
 
             const tagSummaries = new Map<string, CombinedBlocTagSummary>(
                 [...tagRules].map(([tag, rule]) => [tag, {

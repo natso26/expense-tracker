@@ -41,17 +41,19 @@ export const Table = {
         border-bottom: 2px solid #009879;
       }
     `,
-    Number: {
-        Header: styled.th`
-          text-align: right;
+    Row: {
+        Date: styled.tr`
+          font-weight: bold;
         `,
-        Data: styled.td`
+    },
+    Header: {
+        Number: styled.th`
           text-align: right;
         `,
     },
-    Date: {
-        Row: styled.tr`
-          font-weight: bold;
+    Data: {
+        Number: styled.td`
+          text-align: right;
         `,
     },
 }

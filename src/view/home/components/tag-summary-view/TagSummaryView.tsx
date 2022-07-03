@@ -80,7 +80,7 @@ export const TagSummaryView = (props: {
         </InputGrid>
         {isTagSearchNonEmpty && (
             <VerticalMargin>
-                <button onClick={onClickClearTagSearch}>Clear tag search</button>
+                <button onClick={onClickClearTagSearch}>Clear search</button>
             </VerticalMargin>
         )}
         <TagSummaryTable data={{

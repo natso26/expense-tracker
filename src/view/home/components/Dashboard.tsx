@@ -43,7 +43,7 @@ export const Dashboard = (props: {
     }] = React.useState<Filter>(filter)
 
     const [fetchExpensesOutput, setFetchExpensesOutput] =
-        useWrappedState<Parameters<Parameters<typeof CombinedBloc.getExpenses>[1]>[0] extends State<infer I> ? I : never>()
+        useWrappedState<Parameters<Parameters<typeof CombinedBloc.getExpenses>[1]>[0] extends State<infer T> ? T : never>()
 
     useEffectSkipInitial(() => {
         setQueryCallback(query)

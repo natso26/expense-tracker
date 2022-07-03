@@ -35,7 +35,7 @@ export const TagSummaryTable = (props: {
             <thead>
             <tr>
                 <th>Tag</th>
-                <Table.Number.Header>Amount</Table.Number.Header>
+                <Table.Header.Number>Amount</Table.Header.Number>
                 <th>Is part of</th>
             </tr>
             </thead>
@@ -43,9 +43,9 @@ export const TagSummaryTable = (props: {
             {tagSummaryEntries.flatMap(([tag, summary]) => [
                 <tr key={tag} id={tag} onClick={onClickSummary}>
                     <td>{tag}</td>
-                    <Table.Number.Data>{
+                    <Table.Data.Number>{
                         serializeAmount(summary.amount || null) || '\u2013'
-                    }</Table.Number.Data>
+                    }</Table.Data.Number>
                     <td>{serializeTags(summary.isPartOf)}</td>
                 </tr>
             ])}
