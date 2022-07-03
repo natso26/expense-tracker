@@ -56,7 +56,7 @@ export const EditExpenseForm = (props: {
     const onClickDelete = async (e: any) => {
         e.preventDefault()
 
-        const confirmResp = window.confirm('Delete expense-view?')
+        const confirmResp = window.confirm('Delete expense?')
 
         if (!confirmResp) return
 
