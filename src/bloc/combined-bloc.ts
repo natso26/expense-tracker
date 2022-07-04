@@ -72,7 +72,7 @@ export const CombinedBloc = {
                     tagSummaryEntries.filter(([tag,]) =>
                         tag.toLowerCase().includes(name.toLowerCase())
                         && isPartOf.every((ancestor) =>
-                            tagRules.get(tag)?.expandedIsPartOf.has(ancestor))
+                            tagRules.get(tag)?.expandedIsPartOf.has(ancestor) ?? ancestor === tag)
                     ),
                 ),
             }
