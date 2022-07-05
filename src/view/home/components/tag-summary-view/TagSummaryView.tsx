@@ -56,9 +56,9 @@ export const TagSummaryView = (props: {
         })
     }
 
-    const isTagSearchNonEmpty = Boolean(name || isPartOf.length)
-
     const tagSummaries = tagSummariesSearcher(tagSearch)
+
+    const showClearTagSearch = Boolean(name || isPartOf.length)
 
     return <>
         <InputGrid>
@@ -78,7 +78,7 @@ export const TagSummaryView = (props: {
                 defaultValue={serializeTags(initialIsPartOf)}
             />
         </InputGrid>
-        {isTagSearchNonEmpty && (
+        {showClearTagSearch && (
             <VerticalMargin>
                 <button onClick={onClickClearTagSearch}>Clear search</button>
             </VerticalMargin>

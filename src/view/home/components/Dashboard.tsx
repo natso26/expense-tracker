@@ -88,7 +88,9 @@ export const Dashboard = (props: {
         })
     }
 
-    const isFilterNonEmpty = Boolean(date || title || tags.length)
+    const isFilterDisabled = view !== 'expenses'
+
+    const showClearFilter = Boolean(date || title || tags.length) && !isFilterDisabled
 
     return <>
         <InputGrid>
@@ -98,6 +100,7 @@ export const Dashboard = (props: {
                 id="date"
                 type="date"
                 defaultValue={serializeForDateInput(initialDate || null)}
+                disabled={isFilterDisabled}
             />
             <label htmlFor="title">Title</label>
             <input
@@ -105,6 +108,7 @@ export const Dashboard = (props: {
                 id="title"
                 type="search"
                 defaultValue={initialTitle}
+                disabled={isFilterDisabled}
             />
             <label htmlFor="tags">Tags</label>
             <input
@@ -113,9 +117,10 @@ export const Dashboard = (props: {
                 type="search"
                 placeholder={tagsInputPlaceholder}
                 defaultValue={serializeTags(initialTags)}
+                disabled={isFilterDisabled}
             />
         </InputGrid>
-        {isFilterNonEmpty && (
+        {showClearFilter && (
             <VerticalMargin>
                 <button onClick={onClickClearFilter}>Clear filter</button>
             </VerticalMargin>
