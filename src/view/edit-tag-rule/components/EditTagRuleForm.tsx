@@ -38,10 +38,10 @@ export const EditTagRuleForm = (props: {
             }),
         }
 
-        await TagRuleBloc.edit(input, (state) => {
-            setSubmit(state)
+        TagRuleBloc.edit(input, (state) => {
+            setSubmit(state);
 
-            if (state.state === 'DATA') onSubmitCallback()
+            if (state.state === 'DATA') onSubmitCallback();
         })
     }
 
@@ -52,7 +52,7 @@ export const EditTagRuleForm = (props: {
 
         if (!confirmResp) return
 
-        await TagRuleBloc.delete({tag}, (state) => {
+        TagRuleBloc.delete({tag}, (state) => {
             setSubmit(state)
 
             if (state.state === 'DATA') onSubmitCallback()

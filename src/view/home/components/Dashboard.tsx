@@ -3,31 +3,29 @@ import {DashboardContents} from "./DashboardContents";
 import {parseTags, serializeTags} from "../../../common/tag";
 import {parseDate, serializeForDateInput} from "../../../common/date";
 import {CombinedBloc} from "../../../bloc/combined-bloc";
-import {useEffectSkipInitial, useWrappedState} from "../../view-utils/hooks/helper";
+import {useWrappedState} from "../../view-utils/hooks/helper";
 import {tagsInputPlaceholder} from "../../view-utils/const";
 import {fieldLens, Lens, useLens} from "../../view-utils/hooks/lens";
 import {StateComponent} from "../../components/state";
-import {GetSet} from "../../view-utils/type";
+import {UseState} from "../../view-utils/type";
 import {InputGrid} from "../../components/input-grid";
 import {VerticalMargin} from "../../components/vertical-margin";
 import {State} from "../../../common/state";
 
 export type DashboardDataQuery = {
-    view: Parameters<typeof DashboardContents>[0]['data']['query']['view'] extends GetSet<infer T> ? T : never,
+    view: Parameters<typeof DashboardContents>[0]['data']['query']['view'] extends UseState<infer T> ? T : never,
     filter: Filter,
-    tagSearch: Parameters<typeof DashboardContents>[0]['data']['query']['tagSearch'] extends GetSet<infer T> ? T : never,
+    tagSearch: Parameters<typeof DashboardContents>[0]['data']['query']['tagSearch'] extends UseState<infer T> ? T : never,
 }
 
 export const Dashboard = (props: {
     data: {
-        query: GetSet<DashboardDataQuery>,
+        query: UseState<DashboardDataQuery>,
     },
 }) => {
     const {
-        query: {get: getQuery, set: setQueryCallback},
+        query: [query, setQuery],
     } = props.data
-
-    const [query, setQuery] = React.useState<DashboardDataQuery>(getQuery())
 
     const [view, setView] = useLens([query, setQuery], queryViewLens)
 
@@ -45,37 +43,44 @@ export const Dashboard = (props: {
     const [fetchExpensesOutput, setFetchExpensesOutput] =
         useWrappedState<Parameters<Parameters<typeof CombinedBloc.getExpenses>[1]>[0] extends State<infer T> ? T : never>()
 
-    useEffectSkipInitial(() => {
-        setQueryCallback(query)
-    }, [setQueryCallback, query])
-
-    React.useEffect(() => {
+    const updateExpenses = (filter: Filter) =>
         CombinedBloc.getExpenses({filter}, setFetchExpensesOutput)
-    }, [filter, setFetchExpensesOutput])
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    React.useEffect(() => updateExpenses(filter), [])
+
+    const setFilterAndUpdateExpenses = (action: (filter: Filter) => Filter) =>
+        setFilter((filter) => {
+            const nextFilter = action(filter)
+
+            updateExpenses(nextFilter)
+
+            return nextFilter
+        })
 
     const onDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setFilter((filter) => ({
+        setFilterAndUpdateExpenses((filter) => ({
             ...filter,
             date: parseDate(e.target.value) || undefined,
         }))
     }
 
     const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setFilter((filter) => ({
+        setFilterAndUpdateExpenses((filter) => ({
             ...filter,
             title: e.target.value.trim().toLowerCase(),
         }))
     }
 
     const onTagsChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setFilter((filter) => ({
+        setFilterAndUpdateExpenses((filter) => ({
             ...filter,
             tags: parseTags(e.target.value),
         }))
     }
 
     const onClickClearFilter = () => {
-        setFilter(() => {
+        setFilterAndUpdateExpenses(() => {
             document.querySelector<HTMLInputElement>('#date')!.value = ''
             document.querySelector<HTMLInputElement>('#title')!.value = ''
             document.querySelector<HTMLInputElement>('#tags')!.value = ''
@@ -139,14 +144,8 @@ export const Dashboard = (props: {
                     return (
                         <DashboardContents data={{
                             query: {
-                                view: {
-                                    get: () => view,
-                                    set: setView,
-                                },
-                                tagSearch: {
-                                    get: () => tagSearch,
-                                    set: setTagSearch,
-                                },
+                                view: [view, setView],
+                                tagSearch: [tagSearch, setTagSearch],
                             },
                             result: fetchExpensesOutput.data,
                         }}/>

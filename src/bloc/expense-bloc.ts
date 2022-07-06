@@ -13,7 +13,7 @@ export const ExpenseBloc = {
     add: BlocHelper.wrapWithStateCallback(
         async (input: {
             expense: ExpenseBlocExpense,
-        }) => {
+        }): Promise<void> => {
             Store.clear()
 
             await ExpenseApi.add(input)

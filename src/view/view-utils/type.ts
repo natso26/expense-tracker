@@ -1,4 +1,3 @@
-export type GetSet<T> = {
-    get: () => T,
-    set: (value: T) => void,
-}
+import {Dispatch, SetStateAction} from "react";
+
+export type UseState<S> = [S, Dispatch<SetStateAction<S>>]

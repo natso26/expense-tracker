@@ -48,7 +48,7 @@ export const EditExpenseForm = (props: {
             }),
         }
 
-        await ExpenseBloc.edit(input, (state) => {
+        ExpenseBloc.edit(input, (state) => {
             setSubmit(state)
 
             if (state.state === 'DATA') onSubmitCallback()
@@ -62,7 +62,7 @@ export const EditExpenseForm = (props: {
 
         if (!confirmResp) return
 
-        await ExpenseBloc.delete({id}, (state) => {
+        ExpenseBloc.delete({id}, (state) => {
             setSubmit(state)
 
             if (state.state === 'DATA') onSubmitCallback()

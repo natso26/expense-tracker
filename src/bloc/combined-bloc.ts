@@ -4,6 +4,8 @@ import {CombinedApi} from "../api/combined-api";
 import {processCombined} from "./process-combined";
 import {onReferenceDate} from "../common/date";
 import {BlocHelper} from "./bloc-helper";
+import {State} from "../common/state";
+import {PromiseOr} from "./type";
 
 export type CombinedBlocTagSummary = {
     amount?: number,
@@ -12,13 +14,13 @@ export type CombinedBlocTagSummary = {
 
 export const CombinedBloc = {
     getExpenses: BlocHelper.wrapWithStateCallback(
-        async (input: {
+        (input: {
             filter: {
                 date?: Date,
                 title: string,
                 tags: string[],
             },
-        }): Promise<{
+        }): PromiseOr<{
             totalAmount: number,
             expenses: Map<string, ExpenseBlocExpense>,
             tagSummaries: (tagSearch: {
@@ -26,70 +28,85 @@ export const CombinedBloc = {
                 isPartOf: string[],
             }) => Map<string, CombinedBlocTagSummary>,
         }> => {
-            const {filter: {date, title, tags}} = input
+            const combined = getCombined()
 
-            const {expenses, tagRules} = await getCombined()
+            if (!(combined instanceof Promise)) {
+                return getExpensesSync(input, combined)
 
-            const expenseEntries = [...expenses]
-                .filter(([, expense]) =>
-                    (!date || onReferenceDate(expense.timestamp, date))
-                    && expense.title.toLowerCase().includes(title.toLowerCase())
-                    && tags.every((tag) => expense.expandedTags.has(tag)))
-
-            const tagSummaries = new Map<string, CombinedBlocTagSummary>(
-                [...tagRules].map(([tag, rule]) => [tag, {
-                    isPartOf: rule.isPartOf,
-                }]),
-            )
-
-            for (const [, expense] of expenseEntries) {
-                for (const tag of expense.expandedTags) {
-                    const tagSummary = tagSummaries.get(tag)
-
-                    tagSummaries.set(tag, {
-                        amount: (tagSummary?.amount || 0) + expense.amount,
-                        isPartOf: tagSummary?.isPartOf || [],
-                    })
-                }
-            }
-
-            const tagSummaryEntries = [...tagSummaries]
-                .sort(([tag1,], [tag2,]) =>
-                    tag1.localeCompare(tag2))
-
-            return {
-                totalAmount: expenseEntries.reduce((sum, [, expense]) =>
-                    sum + expense.amount, 0),
-                expenses: new Map(
-                    expenseEntries.map(([id, expense]) => [id, {
-                        timestamp: expense.timestamp,
-                        title: expense.title,
-                        amount: expense.amount,
-                        tags: expense.tags,
-                    }]),
-                ),
-                tagSummaries: ({name, isPartOf}) => new Map(
-                    tagSummaryEntries.filter(([tag,]) =>
-                        tag.toLowerCase().includes(name.toLowerCase())
-                        && isPartOf.every((ancestor) =>
-                            tagRules.get(tag)?.expandedIsPartOf.has(ancestor) ?? ancestor === tag)
-                    ),
-                ),
+            } else {
+                return combined.then((combined) =>
+                    getExpensesSync(input, combined))
             }
         },
     ),
 }
 
-const getCombined = async (): Promise<StoreValue> => {
+const getExpensesSync = (
+    input: Parameters<typeof CombinedBloc.getExpenses>[0],
+    combined: StoreValue,
+): Parameters<Parameters<typeof CombinedBloc.getExpenses>[1]>[0] extends State<infer T> ? T : never => {
+    const {filter: {date, title, tags}} = input
+
+    const {expenses, tagRules} = combined
+
+    const expenseEntries = [...expenses]
+        .filter(([, expense]) =>
+            (!date || onReferenceDate(expense.timestamp, date))
+            && expense.title.toLowerCase().includes(title.toLowerCase())
+            && tags.every((tag) => expense.expandedTags.has(tag)))
+
+    const tagSummaries = new Map<string, CombinedBlocTagSummary>(
+        [...tagRules].map(([tag, rule]) => [tag, {
+            isPartOf: rule.isPartOf,
+        }]),
+    )
+
+    for (const [, expense] of expenseEntries) {
+        for (const tag of expense.expandedTags) {
+            const tagSummary = tagSummaries.get(tag)
+
+            tagSummaries.set(tag, {
+                amount: (tagSummary?.amount || 0) + expense.amount,
+                isPartOf: tagSummary?.isPartOf || [],
+            })
+        }
+    }
+
+    const tagSummaryEntries = [...tagSummaries]
+        .sort(([tag1,], [tag2,]) =>
+            tag1.localeCompare(tag2))
+
+    return {
+        totalAmount: expenseEntries.reduce((sum, [, expense]) =>
+            sum + expense.amount, 0),
+        expenses: new Map(
+            expenseEntries.map(([id, expense]) => [id, {
+                timestamp: expense.timestamp,
+                title: expense.title,
+                amount: expense.amount,
+                tags: expense.tags,
+            }]),
+        ),
+        tagSummaries: ({name, isPartOf}) => new Map(
+            tagSummaryEntries.filter(([tag,]) =>
+                tag.toLowerCase().includes(name.toLowerCase())
+                && isPartOf.every((ancestor) =>
+                    tagRules.get(tag)?.expandedIsPartOf.has(ancestor) ?? ancestor === tag)
+            ),
+        ),
+    }
+}
+
+const getCombined = (): PromiseOr<StoreValue> => {
     const storeState = Store.get()
 
     if (storeState.hasValue) return storeState.value
 
-    const rawOutput = await CombinedApi.fetch()
+    return CombinedApi.fetch().then((rawOutput) => {
+        const output = processCombined(rawOutput)
 
-    const output = processCombined(rawOutput)
+        Store.set(output)
 
-    Store.set(output)
-
-    return output
+        return output
+    })
 }

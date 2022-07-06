@@ -1,7 +1,6 @@
 import React, {ChangeEvent} from "react";
 import {parseTags, serializeTags} from "../../../../common/tag";
-import {GetSet} from "../../../view-utils/type";
-import {useEffectSkipInitial} from "../../../view-utils/hooks/helper";
+import {UseState} from "../../../view-utils/type";
 import {tagsInputPlaceholder} from "../../../view-utils/const";
 import {TagSummaryTable} from "./TagSummaryTable";
 import {InputGrid} from "../../../components/input-grid";
@@ -9,26 +8,21 @@ import {VerticalMargin} from "../../../components/vertical-margin";
 
 export const TagSummaryView = (props: {
     data: {
-        tagSearch: GetSet<TagSearch>,
+        tagSearch: UseState<TagSearch>,
         tagSummaries: (tagSearch: TagSearch) => Parameters<typeof TagSummaryTable>[0]['data']['tagSummaries'],
     },
 }) => {
     const {
-        tagSearch: {get: getTagSearch, set: setTagSearchCallback},
+        tagSearch: [tagSearch, setTagSearch],
         tagSummaries: tagSummariesSearcher,
     } = props.data
 
-    const [tagSearch, setTagSearch] = React.useState<TagSearch>(getTagSearch())
     const {name, isPartOf} = tagSearch
 
     const [{
         name: initialName,
         isPartOf: initialIsPartOf,
     }] = React.useState<TagSearch>(tagSearch)
-
-    useEffectSkipInitial(() => {
-        setTagSearchCallback(tagSearch)
-    }, [setTagSearchCallback, tagSearch])
 
     const onNameChange = (e: ChangeEvent<HTMLInputElement>) => {
         setTagSearch((tagSearch) => ({

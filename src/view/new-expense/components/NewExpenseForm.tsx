@@ -35,7 +35,7 @@ export const NewExpenseForm = (props: {
             }),
         }
 
-        await ExpenseBloc.add(input, (state) => {
+        ExpenseBloc.add(input, (state) => {
             setSubmit(state)
 
             if (state.state === 'DATA') onSubmitCallback()

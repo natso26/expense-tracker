@@ -1,5 +1,6 @@
 import {State, StateConstructor} from "../../../common/state";
-import React, {DependencyList, EffectCallback} from "react";
+import React from "react";
+import {UseState} from "../type";
 
 export const useWrappedState = <T>() => (
     React.useState<State<T>>(StateConstructor.Init())
@@ -11,16 +12,16 @@ export const useNavigateBack = (navigate: (delta: number) => void) => (
     }, [navigate])
 )
 
-export const useEffectSkipInitial = (effect: EffectCallback, deps?: DependencyList) => {
-    const runEffect = React.useRef(false)
+export const useStateFromCallback = <T>(
+    initialState: T,
+    callback: (state: T) => void
+): UseState<T> => {
+    const ref = React.useRef(initialState)
 
-    React.useEffect(() => {
-        if (!runEffect.current) {
-            runEffect.current = true
-            return
-        }
-
-        effect()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, deps)
+    return [
+        ref.current,
+        React.useCallback((action) =>
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            callback(ref.current = action instanceof Function ? action(ref.current) : action), []),
+    ]
 }

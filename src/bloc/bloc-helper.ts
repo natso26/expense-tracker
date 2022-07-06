@@ -1,15 +1,25 @@
 import {State, StateConstructor} from "../common/state";
+import {PromiseOr} from "./type";
 
 export const BlocHelper = {
     wrapWithStateCallback: <I, O>(
-        operation: (input: I) => Promise<O>,
-    ) => async (input: I, stateCallback: (state: State<O>) => void) => {
-        stateCallback(StateConstructor.Loading())
-
+        operation: (input: I) => PromiseOr<O>,
+    ) => (input: I, stateCallback: (state: State<O>) => void) => {
         try {
-            const output = await operation(input)
+            const output = operation(input)
 
-            stateCallback(StateConstructor.Data(output))
+            if (!(output instanceof Promise)) {
+                stateCallback(StateConstructor.Data(output))
+
+            } else {
+                stateCallback(StateConstructor.Loading())
+
+                output
+                    .then((output) =>
+                        stateCallback(StateConstructor.Data(output)))
+                    .catch((e) =>
+                        stateCallback(StateConstructor.Error(e)))
+            }
 
         } catch (e) {
             stateCallback(StateConstructor.Error(e))

@@ -2,15 +2,14 @@ import React from "react";
 import {serializeAmount} from "../../../common/expense";
 import {ExpenseView} from "./expense-view/ExpenseView";
 import {TagSummaryView} from "./tag-summary-view/TagSummaryView";
-import {useEffectSkipInitial} from "../../view-utils/hooks/helper";
-import {GetSet} from "../../view-utils/type";
+import {UseState} from "../../view-utils/type";
 import {VerticalMargin} from "../../components/vertical-margin";
 import {TextSpan} from '../../components/text-span';
 
 export const DashboardContents = (props: {
     data: {
         query: {
-            view: GetSet<View>
+            view: UseState<View>
             tagSearch: Parameters<typeof TagSummaryView>[0]['data']['tagSearch'],
         },
         result: {
@@ -22,21 +21,14 @@ export const DashboardContents = (props: {
 }) => {
     const {
         query: {
-            view: {get: getView, set: setViewCallback},
+            view: [view, setView],
             tagSearch,
         },
         result: {totalAmount, expenses, tagSummaries},
     } = props.data
 
-    const [view, setView] = React.useState<View>(getView())
-
-    useEffectSkipInitial(() => {
-        setViewCallback(view)
-    }, [setViewCallback, view])
-
-    const onClickChangeTabButton = () => {
+    const onClickChangeTabButton = () =>
         setView((view) => view === 'expenses' ? 'tags' : 'expenses')
-    }
 
     return <>
         <VerticalMargin>
