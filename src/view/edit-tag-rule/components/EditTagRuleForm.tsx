@@ -39,9 +39,9 @@ export const EditTagRuleForm = (props: {
         }
 
         TagRuleBloc.edit(input, (state) => {
-            setSubmit(state);
+            setSubmit(state)
 
-            if (state.state === 'DATA') onSubmitCallback();
+            if (state.state === 'DATA') onSubmitCallback()
         })
     }
 
