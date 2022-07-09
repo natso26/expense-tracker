@@ -1,6 +1,6 @@
-import {Store} from "./store";
 import {TagRuleApi} from "../api/tag-rule-api";
 import {BlocHelper} from "./bloc-helper";
+import {clearCombinedCache} from "./combined-bloc";
 
 export type TagRuleBlocRule = {
     isPartOf: string[],
@@ -12,7 +12,7 @@ export const TagRuleBloc = {
             tag: string,
             rule: TagRuleBlocRule,
         }): Promise<void> => {
-            Store.clear()
+            clearCombinedCache()
 
             await TagRuleApi.edit(input)
         },
@@ -21,7 +21,7 @@ export const TagRuleBloc = {
         async (input: {
             tag: string,
         }): Promise<void> => {
-            Store.clear()
+            clearCombinedCache()
 
             await TagRuleApi.edit({
                 tag: input.tag,

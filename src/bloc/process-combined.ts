@@ -1,8 +1,19 @@
 import {CombinedApi} from "../api/combined-api";
-import {StoreValue} from "./store";
 import {transitiveClosure} from "../common/graph";
 
-export const processCombined = (input: Awaited<ReturnType<typeof CombinedApi.fetch>>): StoreValue => {
+export const processCombined = (input: Awaited<ReturnType<typeof CombinedApi.fetch>>): {
+    expenses: Map<string, {
+        timestamp: Date,
+        title: string,
+        amount: number,
+        tags: string[],
+        expandedTags: Set<string>, // computed
+    }>,
+    tagRules: Map<string, {
+        isPartOf: string[],
+        expandedIsPartOf: Set<string>, // computed
+    }>,
+} => {
     const isPartOfs = new Map(
         [...input.tagRules].map(([tag, rule]) =>
             [tag, new Set(rule.isPartOf)]),

@@ -1,7 +1,7 @@
-import {makeCache} from "./cache";
+import {Cache, makeCache} from "./cache";
 import {PromiseOr, wrapFuncWithPromiseOr} from "./promise-or";
 
-export const cachedFunction = <T>(func: () => PromiseOr<T>): () => PromiseOr<T> => {
+export const cachedFunction = <T>(func: () => PromiseOr<T>): [() => PromiseOr<T>, Cache<T>] => {
     const cache = makeCache<T>()
 
     const setCacheAndPassthrough = wrapFuncWithPromiseOr((value: T) => {
@@ -10,19 +10,19 @@ export const cachedFunction = <T>(func: () => PromiseOr<T>): () => PromiseOr<T> 
         return value
     })
 
-    return () => {
+    return [() => {
         const cacheState = cache.get()
 
         if (cacheState.hasValue) return cacheState.value
 
         return setCacheAndPassthrough(func())
-    }
+    }, cache]
 }
 
-export const cachedFunctionSync = <T>(func: () => T): () => T => {
+export const cachedFunctionSync = <T>(func: () => T): [() => T, Cache<T>] => {
     const cache = makeCache<T>()
 
-    return () => {
+    return [() => {
         const cacheState = cache.get()
 
         if (cacheState.hasValue) return cacheState.value
@@ -32,5 +32,5 @@ export const cachedFunctionSync = <T>(func: () => T): () => T => {
         cache.set(value)
 
         return value
-    }
+    }, cache]
 }

@@ -1,6 +1,6 @@
 import {ExpenseApi} from "../api/expense-api";
-import {Store} from "./store";
 import {BlocHelper} from "./bloc-helper";
+import {clearCombinedCache} from "./combined-bloc";
 
 export type ExpenseBlocExpense = {
     timestamp: Date,
@@ -14,7 +14,7 @@ export const ExpenseBloc = {
         async (input: {
             expense: ExpenseBlocExpense,
         }): Promise<void> => {
-            Store.clear()
+            clearCombinedCache()
 
             await ExpenseApi.add(input)
         },
@@ -24,7 +24,7 @@ export const ExpenseBloc = {
             id: string,
             expense: ExpenseBlocExpense,
         }): Promise<void> => {
-            Store.clear()
+            clearCombinedCache()
 
             await ExpenseApi.edit(input)
         },
@@ -33,7 +33,7 @@ export const ExpenseBloc = {
         async (input: {
             id: string,
         }): Promise<void> => {
-            Store.clear()
+            clearCombinedCache()
 
             await ExpenseApi.delete(input)
         },

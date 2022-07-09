@@ -1,5 +1,4 @@
 import {ExpenseBlocExpense} from "./expense-bloc";
-import {StoreValue} from "./store";
 import {CombinedApi} from "../api/combined-api";
 import {processCombined} from "./process-combined";
 import {onReferenceDate} from "../common/date";
@@ -35,7 +34,7 @@ export const CombinedBloc = {
 
 const getExpensesSync = (
     {filter: {date, title, tags}}: Parameters<typeof CombinedBloc.getExpenses>[0],
-): (combined: StoreValue) =>
+): (combined: ReturnType<typeof getCombined> extends PromiseOr<infer T> ? T : never) =>
     Parameters<Parameters<typeof CombinedBloc.getExpenses>[1]>[0] extends State<infer T> ? T : never =>
     ({expenses, tagRules}) => {
         const expenseEntries = [...expenses]
@@ -44,7 +43,7 @@ const getExpensesSync = (
                 && expense.title.toLowerCase().includes(title.toLowerCase())
                 && tags.every((tag) => expense.expandedTags.has(tag)))
 
-        const tagSummaryEntries = cachedFunctionSync(() => {
+        const [tagSummaryEntries] = cachedFunctionSync(() => {
             const tagSummaries = new Map<string, CombinedBlocTagSummary>(
                 [...tagRules].map(([tag, rule]) => [tag, {
                     isPartOf: rule.isPartOf,
@@ -88,5 +87,7 @@ const getExpensesSync = (
         }
     }
 
-const getCombined = cachedFunction(async () =>
+const [getCombined, combinedCache] = cachedFunction(async () =>
     processCombined(await CombinedApi.fetch()))
+
+export const clearCombinedCache = combinedCache.clear
