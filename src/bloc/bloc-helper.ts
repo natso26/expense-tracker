@@ -1,5 +1,5 @@
 import {State, StateConstructor} from "../common/state";
-import {PromiseOr} from "./type";
+import {PromiseOr} from "../common/promise-or";
 
 export const BlocHelper = {
     wrapWithStateCallback: <I, O>(
