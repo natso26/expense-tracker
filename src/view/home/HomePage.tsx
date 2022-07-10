@@ -4,7 +4,6 @@ import {Dashboard, DashboardDataQuery} from "./components/Dashboard";
 import {compactSerializeTags, parseTags} from "../../common/tag";
 import {parseDateTime} from "../../common/date";
 import {VerticalMargin} from "../components/vertical-margin";
-import {MenuBar} from "../components/menu-bar";
 import {useStateFromCallback} from "../view-utils/hooks/helper";
 
 export const HomePage = () => {
@@ -25,10 +24,7 @@ export const HomePage = () => {
     return <>
         <h1>Expense Tracker</h1>
         <VerticalMargin>
-            <MenuBar>
-                <Link to='/new-expense'>New expense</Link>
-                <Link to='/export'>Export</Link>
-            </MenuBar>
+            <Link to='/new-expense'>New expense</Link>
         </VerticalMargin>
         {hasRewrittenQuery.current &&
             <Dashboard data={{
